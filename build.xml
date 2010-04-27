@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<!--
+   This build script is purely for building BuildSys.
+-->
+
+<project name="buildsys" basedir="." default="clean">
+
+
+    <patternset id="core.sources">
+        <include name="org/ftm/api/**/*.java"/>
+        <!--<exclude name="org/ftm/**/*.java"/>-->
+    </patternset>
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="ftm.api.build">
+        <mkdir dir="build"/>
+        <javac srcdir="src/java"
+               destdir="build">
+            <patternset refid="core.sources"/>
+        </javac>
+        <jar jarfile="ftm_api.jar"
+             compress="true" index="true"
+             basedir="build">
+            <include name="**/*"/>
+        </jar>
+    </target>
+
+    <target name="install.ftm.api.jar">
+        <mkdir dir="src/java/example/ftmapi/library"/>
+        <move file="ftm_api.jar" todir="src/java/example/ftmapi/library"/>
+    </target>
+</project>
