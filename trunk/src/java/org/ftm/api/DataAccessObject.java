@@ -12,6 +12,11 @@ import java.net.URL;
  * @since Apr 26, 2010
  */
 public final class DataAccessObject {
+
+    /**
+     * USe VoteSmart instead.
+     */
+
     private static final String FTM_API_KEY = "d7d55c6207bd8aff6846ec347c74fc1a";
     private static final String HOST = "api.followthemoney.org";
     private static final String URI_ACCESS = "http://%s/%s?key=%s%s";
