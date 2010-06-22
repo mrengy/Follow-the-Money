@@ -13,6 +13,7 @@
 
     <patternset id="core.sources">
         <include name="org/ftm/api/**/*.java"/>
+        <include name="org/ftm/impl/**/*.java"/>
     </patternset>
 
     <target name="clean">
