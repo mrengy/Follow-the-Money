@@ -1,22 +1,24 @@
 import processing.net.*;
 import org.ftm.api.*;
+import java.util.*;
+import org.ftm.impl.*;
 
 Client c = null;
-String data=null;
-DataAccessObject dao = new DataAccessObject();
+java.util.List<Issue> issues=null;
+DataAccessObject dao = new DataAccessObjectTextFile();
 try {
-  data = dao.getCandidates();
+  issues = new ArrayList(dao.getIssues());
 } 
 catch (Exception e) {
   e.printStackTrace();
   exit();
 }
-XMLElement xml = new XMLElement(data);
-int numSites = xml.getChildCount();
-for (int i = 0; i < numSites; i++) {
-  XMLElement kid = xml.getChild(i);
-  int id = kid.getIntAttribute("imsp_candidate_id");
-  String name = kid.getStringAttribute("candidate_name"); 
-  println(name + " - " + id);    
+/*for (Issue issue : issues) ....{
+}
+*/
+
+for (int i = 0; i < issues.size(); i++){
+  Issue issue = issues.get(i);
+  println(" - " + issue.getDescription());    
 }
 
