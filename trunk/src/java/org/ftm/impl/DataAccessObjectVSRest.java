@@ -2,6 +2,7 @@ package org.ftm.impl;
 
 import org.ftm.api.DataAccessObject;
 import org.ftm.api.Issue;
+import org.ftm.api.Politician;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -56,6 +57,10 @@ public final class DataAccessObjectVSRest implements DataAccessObject {
             }
         }
         return null;
+    }
+
+    public List<Politician> getPoliticians() throws Exception {
+        throw new IllegalStateException("org.ftm.impl.DataAccessObjectVSRest.getPoliticians Not implemented");
     }
 
     private static String downloadContent(String uri) throws IOException {
