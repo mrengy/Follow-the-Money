@@ -3,6 +3,7 @@ package org.ftm.impl;
 import org.apache.commons.lang.StringUtils;
 import org.ftm.api.DataAccessObject;
 import org.ftm.api.Issue;
+import org.ftm.api.Politician;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,9 +70,37 @@ public final class DataAccessObjectTextFile implements DataAccessObject {
         return issues;
     }
 
-    public static void main(String[] args) throws Exception {
-        for (Issue issue : new DataAccessObjectTextFile().getIssues()) {
-            System.out.println("issue " + issue.getDescription());
+    public List<Politician> getPoliticians() throws Exception {
+        final String names =
+                "Richard Shelby\n" +
+                        "Jefferson Sessions, III\n" +
+                        "Josiah Bonner, Jr.\n" +
+                        "Bobby Bright\n" +
+                        "Michael Rogers\n" +
+                        "Robert Aderholt\n" +
+                        "R. Griffith\n" +
+                        "Spencer Bachus\n" +
+                        "Artur Davis";
+        final String[] politicianNames = StringUtils.split(names, "\n");
+        List<Politician> politicians = new ArrayList<Politician>(9);
+        for (String politicianName : politicianNames) {
+            if (!StringUtils.isBlank(politicianName)) {
+                politicians.add(new Politician(politicianName));
+            }
         }
+        return politicians;
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        DataAccessObject dao = new DataAccessObjectTextFile();
+
+
+        for (Politician candidate : dao.getPoliticians()) {
+            System.out.println("candidate: " + candidate.getName());
+        }
+        //        for (Issue issue : new DataAccessObjectTextFile().getIssues()) {
+        //            System.out.println("issue " + issue.getDescription());
+        //        }
     }
 }

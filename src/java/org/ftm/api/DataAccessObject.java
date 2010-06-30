@@ -7,9 +7,11 @@ import java.util.List;
  * @since Jun 21, 2010
  */
 public interface DataAccessObject {
-    //    Collection<Candidate> getCandidates() throws Exception;
+    //    Collection<Politician> getCandidates() throws Exception;
     //
     //    Collection<Contributor> getContributorsUsingCandidateId(int id) throws Exception;
 
     List<Issue> getIssues() throws Exception;
+
+    List<Politician> getPoliticians() throws Exception;
 }
