@@ -7,6 +7,7 @@
 <project name="buildsys" basedir="." default="clean">
 
     <property name="build.dir" value="build"/>
+    <property name="lib.dir" value="lib"/>
     <property name="ftm.java.api.jar" value="ftmapi.jar"/>
     <property name="src.java.dir" location="src/java"/>
     <property environment="env"/>
@@ -41,5 +42,7 @@
 
         <mkdir dir="${processing.libraries.dir}"/>
         <move file="${ftm.java.api.jar}" todir="${processing.libraries.dir}"/>
+        <move file="${lib.dir}/commons-io_1.3.2.jar" todir="${processing.libraries.dir}"/>
+        <move file="${lib.dir}/commons-lang_2.3.jar" todir="${processing.libraries.dir}"/>
     </target>
 </project>
