@@ -4,7 +4,7 @@ import java.util.*;
 import org.ftm.impl.*;
 
 // Client c = null;
-DataAccessObject dao = new DataAccessObjectTextFile();
+DataAccessObject dao = new DataAccessObjectVSRest();
 java.util.List<Politician> politicians=null;
 try {
   politicians = new ArrayList(dao.getPoliticians());
