@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,8 +59,47 @@ public final class DataAccessObjectVSRest implements DataAccessObject {
         return null;
     }
 
+    private static final String GET_CANDIDATES = String.format(
+            URI_ACCESS,
+            HOST,
+            "Officials.getStatewide",
+            FTM_API_KEY,
+            ""
+    );
+
     public List<Politician> getPoliticians() throws Exception {
-        throw new IllegalStateException("org.ftm.impl.DataAccessObjectVSRest.getPoliticians Not implemented");
+        final String xmlDoc = downloadContent(GET_CANDIDATES);
+        final ByteArrayInputStream bis = new ByteArrayInputStream(xmlDoc.getBytes("UTF-8"));
+        //        FileInputStream bis = new FileInputStream(new File("/Users/hujol/Projects/followthemoney/sf/resources", "pvs-api-candidates.xml"));
+        final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(bis);
+        final NodeList nodes = doc.getChildNodes();
+        final List<Politician> politicians = new ArrayList<Politician>(8);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            final Node node = nodes.item(i);
+            final NodeList attributes = node.getChildNodes();
+            final int l = attributes.getLength();
+            for (int j = 0; j < l; j++) {
+                final Node att = attributes.item(j);
+                String nodeName = att.getNodeName().toLowerCase();
+                if ("candidate".equals(nodeName)) {
+                    NodeList candidatesAttributes = att.getChildNodes();
+                    String firstName = null;
+                    String lastName = null;
+                    for (int k = 0; k < candidatesAttributes.getLength(); k++) {
+                        Node node1 = candidatesAttributes.item(k);
+                        String name = node1.getNodeName();
+                        String content = node1.getTextContent();
+                        if ("firstName".equalsIgnoreCase(name)) {
+                            firstName = content;
+                        } else if ("lastName".equalsIgnoreCase(name)) {
+                            lastName = content;
+                        }
+                    }
+                    politicians.add(new Politician(lastName + " " + firstName));
+                }
+            }
+        }
+        return politicians;
     }
 
     private static String downloadContent(String uri) throws IOException {
@@ -90,7 +129,10 @@ public final class DataAccessObjectVSRest implements DataAccessObject {
 
     public static void main(String[] args) throws Exception {
         final DataAccessObjectVSRest dao = new DataAccessObjectVSRest();
-        final Collection<Issue> ss = dao.getIssues();
-        System.out.println(ss);
+        final List<Politician> ss = dao.getPoliticians();
+
+        for (Politician s : ss) {
+            System.out.println(s.getName());
+        }
     }
 }
