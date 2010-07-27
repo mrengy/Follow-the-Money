@@ -43,13 +43,28 @@
         </jar>
     </target>
 
-    <target name="install.ftm.api.jar.osx" depends="ftm.api.build">
-        <property name="processing.libraries.dir"
-                  value="/Users/${env.USER}/Documents/Processing/libraries/ftmapi/library/"/>
+    <property name="processing.libraries.dir.osx"
+              value="/Users/${env.USER}/Documents/Processing/libraries/ftmapi/library/"/>
 
+    <property name="processing.libraries.dir.windows"
+              value="C:\Documents and Settings\${env.USERNAME}\My Documents\Processing\libraries\ftmapi\library"/>
+
+    <target name="install.ftm.api.jar.osx" depends="ftm.api.build">
+        <antcall target="-install.ftm.api.jar">
+            <param name="processing.libraries.dir" value="${processing.libraries.dir.osx}"/>
+        </antcall>
+    </target>
+
+    <target name="install.ftm.api.jar.windows" depends="ftm.api.build">
+        <antcall target="-install.ftm.api.jar">
+            <param name="processing.libraries.dir" value="${processing.libraries.dir.windows}"/>
+        </antcall>
+    </target>
+
+    <target name="-install.ftm.api.jar" depends="ftm.api.build">
         <mkdir dir="${processing.libraries.dir}"/>
-        <move file="${ftm.java.api.jar}" todir="${processing.libraries.dir}"/>
-        <move file="${lib.dir}/commons-io_1.3.2.jar" todir="${processing.libraries.dir}"/>
-        <move file="${lib.dir}/commons-lang_2.3.jar" todir="${processing.libraries.dir}"/>
+        <copy file="${ftm.java.api.jar}" todir="${processing.libraries.dir}"/>
+        <copy file="${lib.dir}/commons-io_1.3.2.jar" todir="${processing.libraries.dir}"/>
+        <copy file="${lib.dir}/commons-lang_2.3.jar" todir="${processing.libraries.dir}"/>
     </target>
 </project>
