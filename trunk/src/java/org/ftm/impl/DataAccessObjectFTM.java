@@ -10,7 +10,7 @@ import java.net.URL;
 /**
  * This implementation is using the followthemoney.org API.
  *
- * @author <font size=-1 color="#a3a3a3">johnny_hujol@vrtx.com (Johnny Hujol)</font>
+ * @author <font size=-1 color="#a3a3a3">johnny.hujol@gmail.com (Johnny Hujol)</font>
  * @since Apr 26, 2010
  */
 public final class DataAccessObjectFTM { // implements DataAccessObject {

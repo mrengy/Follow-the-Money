@@ -1,7 +1,7 @@
 package org.ftm.api;
 
 /**
- * @author <font size=-1 color="#a3a3a3">johnny_hujol@vrtx.com (Johnny Hujol)</font>
+ * @author <font size=-1 color="#a3a3a3">johnny.hujol@gmail.com (Johnny Hujol)</font>
  * @since Jun 21, 2010
  */
 public final class Issue {
