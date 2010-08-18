@@ -5,6 +5,13 @@ package org.ftm.api;
  * @since Aug 17, 2010
  */
 public final class ZipCode {
-
+	private final int zip5;
+	
+	public ZipCode(int zip5){
+		this.zip5=zip5;
+	}
+	public int getZip5(){
+		return zip5;
+	}
 
 }
