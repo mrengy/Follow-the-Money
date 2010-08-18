@@ -3,11 +3,14 @@ package org.ftm.impl;
 import org.ftm.api.DataAccessObject;
 import org.ftm.api.Issue;
 import org.ftm.api.Politician;
+import org.ftm.api.ZipCode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -69,6 +72,15 @@ public final class DataAccessObjectVSRest implements DataAccessObject {
 
     public List<Politician> getPoliticians() throws Exception {
         final String xmlDoc = downloadContent(GET_CANDIDATES);
+
+        return getPoliticians(xmlDoc);
+    }
+
+    public List<Politician> getPoliticians(ZipCode zipCode) throws Exception {
+        
+    }
+
+    private List<Politician> getPoliticians(String xmlDoc) throws SAXException, IOException, ParserConfigurationException {
         final ByteArrayInputStream bis = new ByteArrayInputStream(xmlDoc.getBytes("UTF-8"));
         //        FileInputStream bis = new FileInputStream(new File("/Users/hujol/Projects/followthemoney/sf/resources", "pvs-api-candidates.xml"));
         final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(bis);
@@ -128,7 +140,8 @@ public final class DataAccessObjectVSRest implements DataAccessObject {
     }
 
     public static void main(String[] args) throws Exception {
-        final DataAccessObjectVSRest dao = new DataAccessObjectVSRest();
+        final DataAccessObject dao = new DataAccessObjectVSRest();
+
         final List<Politician> ss = dao.getPoliticians();
 
         for (Politician s : ss) {

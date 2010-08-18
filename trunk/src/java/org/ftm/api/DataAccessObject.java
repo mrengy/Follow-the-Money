@@ -14,4 +14,6 @@ public interface DataAccessObject {
     List<Issue> getIssues() throws Exception;
 
     List<Politician> getPoliticians() throws Exception;
+
+    List<Politician> getPoliticians(ZipCode zipCode) throws Exception;
 }
