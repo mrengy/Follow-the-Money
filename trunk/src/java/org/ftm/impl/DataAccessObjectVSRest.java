@@ -77,7 +77,9 @@ public final class DataAccessObjectVSRest implements DataAccessObject {
     }
 
     public List<Politician> getPoliticians(ZipCode zipCode) throws Exception {
+        final String xmlDoc = downloadContent(GET_CANDIDATES)+"&zip5="+zipCode.getZip5();
         
+		return getPoliticians(xmlDoc);
     }
 
     private List<Politician> getPoliticians(String xmlDoc) throws SAXException, IOException, ParserConfigurationException {
