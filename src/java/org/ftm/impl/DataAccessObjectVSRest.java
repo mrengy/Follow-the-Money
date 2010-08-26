@@ -70,6 +70,14 @@ public final class DataAccessObjectVSRest implements DataAccessObject {
             ""
     );
 
+    private static final String GET_CANDIDATES_BY_ZIP_CODE = String.format(
+            URI_ACCESS,
+            HOST,
+            "Officials.getByZip",
+            FTM_API_KEY,
+            ""
+    );
+
     public List<Politician> getPoliticians() throws Exception {
         final String xmlDoc = downloadContent(GET_CANDIDATES);
 
@@ -77,7 +85,7 @@ public final class DataAccessObjectVSRest implements DataAccessObject {
     }
 
     public List<Politician> getPoliticians(ZipCode zipCode) throws Exception {
-        final String xmlDoc = downloadContent(GET_CANDIDATES + "&zip5=" + zipCode.getZip5());
+        final String xmlDoc = downloadContent(GET_CANDIDATES_BY_ZIP_CODE + "&zip5=" + zipCode.getZip5());
 
         return getPoliticians(xmlDoc);
     }
