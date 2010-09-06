@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ftm.api.DataAccessObject;
 import org.ftm.api.Issue;
 import org.ftm.api.Politician;
+import org.ftm.api.ZipCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +90,10 @@ public final class DataAccessObjectTextFile implements DataAccessObject {
             }
         }
         return politicians;
+    }
+
+    public List<Politician> getPoliticians(ZipCode zipCode) throws Exception {
+        throw new IllegalStateException("org.ftm.impl.DataAccessObjectTextFile.getPoliticians Not implemented");
     }
 
     public static void main(String[] args) throws Exception {
