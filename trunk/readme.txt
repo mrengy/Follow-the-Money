@@ -7,3 +7,12 @@ Host: api.followthemoney.org
 
 GET /followthemoney/?page_id=98 HTTP/1.1
 Host: www.pauric.net
+
+http://api.followthemoney.org/candidates.list.php?key=d7d55c6207bd8aff6846ec347c74fc1a&state=md
+
+-- Sunlight API
+API key: 160f59b8c6ea40cca6ed1c709179d647
+Get the contributors
+http://transparencydata.com/api/1.0/contributions.json?apikey=160f59b8c6ea40cca6ed1c709179d647&contributor_state=md|va&recipient_ft=mikulski&cycle=2008
+
+http://transparencydata.com/api/1.0/contributions.json?apikey=160f59b8c6ea40cca6ed1c709179d647&contributor_state=md|va&recipient_state=ma&cycle=2008
