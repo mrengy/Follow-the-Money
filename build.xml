@@ -21,6 +21,7 @@
     <patternset id="core.sources">
         <include name="org/ftm/api/**/*.java"/>
         <include name="org/ftm/impl/**/*.java"/>
+        <include name="org/ftm/impl/**/DataAccessObjectTextFile.java"/>
     </patternset>
 
     <target name="clean">
