@@ -6,22 +6,21 @@ package org.ftm.api;
  */
 public final class Contributor {
 
-    private final String name;
+    private final String industryCategory;
 
-    public Contributor(String name) {
-
-        this.name = name;
+    public Contributor(String industryCategory) {
+        this.industryCategory = industryCategory;
     }
 
-    public String getName() {
-        return name;
+    public String getIndustryCategory() {
+        return industryCategory;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("Contributor");
-        sb.append("{name='").append(name).append('\'');
+        sb.append("{industry category='").append(industryCategory).append('\'');
         sb.append('}');
         return sb.toString();
     }

@@ -16,3 +16,7 @@ Get the contributors
 http://transparencydata.com/api/1.0/contributions.json?apikey=160f59b8c6ea40cca6ed1c709179d647&contributor_state=md|va&recipient_ft=mikulski&cycle=2008
 
 http://transparencydata.com/api/1.0/contributions.json?apikey=160f59b8c6ea40cca6ed1c709179d647&contributor_state=md|va&recipient_state=ma&cycle=2008
+
+- transparencydata.com bulk data
+wc -l /Users/hujol/Downloads/contributions.all.csv
+40,504,851 /Users/hujol/Downloads/contributions.all.csv

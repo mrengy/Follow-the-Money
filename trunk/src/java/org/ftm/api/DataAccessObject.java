@@ -1,5 +1,6 @@
 package org.ftm.api;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -9,7 +10,8 @@ import java.util.List;
 public interface DataAccessObject {
     //    Collection<Politician> getCandidates() throws Exception;
     //
-    //    Collection<Contributor> getContributorsUsingCandidateId(int id) throws Exception;
+
+    Collection<Contribution> getContributions(String politicianName) throws Exception;
 
     List<Issue> getIssues() throws Exception;
 
