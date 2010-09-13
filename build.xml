@@ -38,7 +38,8 @@
             <classpath refid="class.path"/>
         </javac>
         <jar jarfile="${ftm.java.api.jar}"
-             compress="true" index="true"
+             compress="true"
+             index="true"
              basedir="${build.dir}">
             <include name="**/*"/>
         </jar>

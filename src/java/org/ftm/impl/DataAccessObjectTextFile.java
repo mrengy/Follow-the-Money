@@ -1,12 +1,14 @@
 package org.ftm.impl;
 
 import org.apache.commons.lang.StringUtils;
+import org.ftm.api.Contribution;
 import org.ftm.api.DataAccessObject;
 import org.ftm.api.Issue;
 import org.ftm.api.Politician;
 import org.ftm.api.ZipCode;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -14,6 +16,10 @@ import java.util.List;
  * @since Jun 21, 2010
  */
 public final class DataAccessObjectTextFile implements DataAccessObject {
+    public Collection<Contribution> getContributions(String politicianName) throws Exception {
+        throw new IllegalStateException("org.ftm.impl.DataAccessObjectTextFile.getContributions Not implemented");
+    }
+
     public List<Issue> getIssues() throws Exception {
         String rawData = "Abortion Issues\n" +
                 "Agriculture Issues\n" +
