@@ -15,6 +15,7 @@ import org.ftm.api.DataAccessObject;
 import org.ftm.api.Issue;
 import org.ftm.api.Politician;
 import org.ftm.api.ZipCode;
+import org.ftm.util.Filter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -61,19 +62,31 @@ public final class SImpleDataAccessObject implements DataAccessObject {
     );
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    public Collection<Contribution> getContributions(String politicianName) throws Exception {
+    public Collection<Contribution> getContributions(final String politicianName) throws Exception {
         final Reader reader = new FileReader(new File("resources/contributions.json"));
-        return loadContribution(reader);
+        Filter<Contribution> filter = new Filter<Contribution>() {
+            public boolean accept(Contribution c) {
+                return c.getRecipientName().getName().toLowerCase().contains(politicianName.toLowerCase());
+            }
+        };
+        return loadContribution(reader, filter);
     }
 
-    private static Collection<Contribution> loadContribution(Reader reader) throws IOException {
+    private static Collection<Contribution> loadContribution(Reader reader, Filter<Contribution> filter) throws IOException {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Map<String, String> categoryOrderToIndustryName = getCategoryOrderToIndustryName();
         gsonBuilder.registerTypeAdapter(Contribution.class, new ContributionDeserializer(categoryOrderToIndustryName));
         final Gson gson = gsonBuilder.create();
         final Type collectionType = new TypeToken<Collection<Contribution>>() {
         }.getType();
-        return gson.fromJson(reader, collectionType);
+        final Collection<Contribution> tmp = gson.fromJson(reader, collectionType);
+        final Collection<Contribution> contributions = new ArrayList<Contribution>(8);
+        for (Contribution contribution : tmp) {
+            if (filter.accept(contribution)) {
+                contributions.add(contribution);
+            }
+        }
+        return contributions;
     }
 
     private static Map<String, String> getCategoryOrderToIndustryName() throws IOException {
@@ -228,11 +241,12 @@ public final class SImpleDataAccessObject implements DataAccessObject {
     public static void main(String[] args) throws Exception {
         final DataAccessObject dao = new SImpleDataAccessObject();
 
-        final List<Politician> ss = dao.getPoliticians(new ZipCode(02143));
+        final Collection<Contribution> ss = dao.getContributions("kerry");
+        //        final List<Politician> ss = dao.getPoliticians(new ZipCode(02143));
         //        final List<Politician> ss = dao.getPoliticians();
 
-        for (Politician s : ss) {
-            System.out.println(s.getName());
+        for (Contribution s : ss) {
+            System.out.println(s);
         }
     }
 }
