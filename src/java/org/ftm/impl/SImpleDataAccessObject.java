@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This implementation is using the followthemoney.org API.
+ * This implementation is multiple data source APIs.
  *
  * @author <font size=-1 color="#a3a3a3">johnny.hujol@gmail.com (Johnny Hujol)</font>
  * @since Apr 26, 2010
@@ -136,7 +136,7 @@ public final class SImpleDataAccessObject implements DataAccessObject {
                 GET_CATEGORIES,
                 2010
         ));
-        final ByteArrayInputStream bis = new ByteArrayInputStream(xmlDoc.getBytes("UTF-8"));
+        final InputStream bis = new ByteArrayInputStream(xmlDoc.getBytes("UTF-8"));
         final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(bis);
         final NodeList nodes = doc.getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
