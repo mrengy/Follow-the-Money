@@ -20,3 +20,6 @@ http://transparencydata.com/api/1.0/contributions.json?apikey=160f59b8c6ea40cca6
 - transparencydata.com bulk data
 wc -l /Users/hujol/Downloads/contributions.all.csv
 40,504,851 /Users/hujol/Downloads/contributions.all.csv
+
+-- Issues
+For a ZIP code there might be 100s of candidates returned how we get all of them? Do we get all of them?

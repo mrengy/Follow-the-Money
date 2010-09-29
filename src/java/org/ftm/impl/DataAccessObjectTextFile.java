@@ -92,7 +92,8 @@ public final class DataAccessObjectTextFile implements DataAccessObject {
         List<Politician> politicians = new ArrayList<Politician>(9);
         for (String politicianName : politicianNames) {
             if (!StringUtils.isBlank(politicianName)) {
-                politicians.add(new Politician(politicianName));
+                final String[] strings = politicianName.split(" ");
+                politicians.add(new Politician(strings[0], 2 == strings.length ? strings[1]: "n/a"));
             }
         }
         return politicians;
@@ -108,7 +109,7 @@ public final class DataAccessObjectTextFile implements DataAccessObject {
 
 
         for (Politician candidate : dao.getPoliticians()) {
-            System.out.println("candidate: " + candidate.getName());
+            System.out.println("candidate: " + candidate.getLastName());
         }
         //        for (Issue issue : new DataAccessObjectTextFile().getIssues()) {
         //            System.out.println("issue " + issue.getDescription());
