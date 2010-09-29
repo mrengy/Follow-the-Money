@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.ftm.api.Contribution;
 import org.ftm.api.Contributor;
 import org.ftm.api.DataAccessObject;
@@ -23,16 +24,16 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,7 +64,10 @@ public final class SimpleDataAccessObject implements DataAccessObject {
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     public Collection<Contribution> getContributions(final String politicianName) throws Exception {
-        final Reader reader = new FileReader(new File("resources/contributions.json"));
+        final StringReader reader = new StringReader(downloadContent("http://transparencydata.com/api/1.0/contributions.json?apikey=160f59b8c6ea40cca6ed1c709179d647&contributor_state=md|va&recipient_ft=" + politicianName.toLowerCase() + "&cycle=2008"));
+
+        //        final Reader reader = new FileReader(new File("resources/contributions.json"));
+
         Filter<Contribution> filter = new Filter<Contribution>() {
             public boolean accept(Contribution c) {
                 return c.getRecipientName().getLastName().toLowerCase().contains(politicianName.toLowerCase());
@@ -92,7 +96,7 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         final Collection<Contribution> tmp = gson.fromJson(reader, collectionType);
         final Collection<Contribution> contributions = new ArrayList<Contribution>(8);
         for (Contribution contribution : tmp) {
-            if (filter.accept(contribution)) {
+            if (null != contribution && filter.accept(contribution)) {
                 contributions.add(contribution);
             }
         }
@@ -100,8 +104,29 @@ public final class SimpleDataAccessObject implements DataAccessObject {
     }
 
     private static Map<String, String> getCategoryOrderToIndustryName() throws IOException {
-        @SuppressWarnings("unchecked")
-        final List<String> rawData = FileUtils.readLines(new File("resources/catcodes-20100402.csv"));
+        InputStream is = SimpleDataAccessObject.class.getResourceAsStream("/resources/catcodes-20100402.csv");
+        StringBuilder sb = new StringBuilder();
+
+        //        @SuppressWarnings("unchecked")
+        //        final List<String> rawData = FileUtils.readLines(new File("resources/catcodes-20100402.csv"));
+        BufferedReader bufIn = null;
+        final List<String> rawData;
+        try {
+            bufIn = new BufferedReader(new InputStreamReader(is));
+            String s1 = bufIn.readLine();
+            rawData = new ArrayList<String>(16);
+            while (null != s1) {
+                rawData.add(s1);
+                s1 = bufIn.readLine();
+            }
+        } finally {
+            if (null != is) {
+                is.close();
+            }
+            if (null != bufIn) {
+                bufIn.close();
+            }
+        }
 
         final Map<String, String> categoryOrderToIndustryName = new HashMap<String, String>(rawData.size());
         for (String s : rawData) {
@@ -142,29 +167,47 @@ public final class SimpleDataAccessObject implements DataAccessObject {
             }
 
             final float amount = object.get("amount").getAsFloat();
-            final String[] strings = recipient.split(",");
-            return new Contribution(new Contributor(industryCategory), amount, new Politician(strings[0], 2 == strings.length ? strings[1] : "n/a"));
+            String[] strings = recipient.split(",");
+            if (1 == strings.length) {
+                strings = recipient.split(" ");
+            }
+            return new Contribution(new Contributor(industryCategory), amount, new Politician(1 < strings.length ? StringUtils.join(strings, " ", 1, strings.length - 1) : "n/a", strings[0]));
         }
     }
 
     public List<Issue> getIssues() throws Exception {
-        final String xmlDoc = downloadContent(String.format(
-                GET_CATEGORIES,
-                2010
-        ));
+        //        final String xmlDoc = downloadContent(String.format(
+        //                GET_CATEGORIES,
+        //                2010
+        //        ));
+
+        final String xmlDoc = FileUtils.readFileToString(new File("/Users/hujol/Projects/followthemoney/sf/resources/categories.xml"));
+
         final InputStream bis = new ByteArrayInputStream(xmlDoc.getBytes("UTF-8"));
         final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(bis);
         final NodeList nodes = doc.getChildNodes();
+        final List<Issue> issues = new ArrayList<Issue>(8);
         for (int i = 0; i < nodes.getLength(); i++) {
             final Node node = nodes.item(i);
             final NodeList attributes = node.getChildNodes();
             final int l = attributes.getLength();
             for (int j = 0; j < l; j++) {
                 final Node att = attributes.item(j);
-
+                if ("category".equals(att.getNodeName())) {
+                    final NodeList genInfos = att.getChildNodes();
+                    final int i1 = genInfos.getLength();
+                    for (int k = 0; k < i1; k++) {
+                        final Node node1 = genInfos.item(k);
+                        if ("name".equals(node1.getNodeName())) {
+                            final String issueName = node1.getTextContent();
+                            issues.add(new Issue(issueName));
+                        }
+                    }
+                }
             }
         }
-        return Collections.emptyList();
+        return issues;
+        //        return Collections.emptyList();
     }
 
     private static final String GET_CANDIDATES = String.format(
@@ -235,14 +278,19 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         InputStream in = null;
         try {
             final URL url = new URL(uri);
-            in = url.openStream();
-            bufIn = new BufferedReader(new InputStreamReader(new BufferedInputStream(in)));
-            String s = bufIn.readLine();
+            HttpURLConnection myConn = (HttpURLConnection) url.openConnection();
+            myConn.setInstanceFollowRedirects(true);
+            myConn.setRequestProperty("User-Agent", "Mozilla/5.0");
+            in = myConn.getInputStream();
+            BufferedReader bufIn1;
+            bufIn1 = new BufferedReader(new InputStreamReader(in));
+            String s = bufIn1.readLine();
             while (null != s) {
                 sb.append(s);
                 sb.append(LINE_SEPARATOR);
-                s = bufIn.readLine();
+                s = bufIn1.readLine();
             }
+            bufIn = bufIn1;
         } finally {
             if (null != in) {
                 in.close();
@@ -254,25 +302,4 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         return sb.toString();
     }
 
-    public static void main(String[] args) throws Exception {
-        final DataAccessObject dao = new SimpleDataAccessObject();
-
-        // Bad because I expose methods that one should not access!
-        //        final SimpleDataAccessObject dao = new SimpleDataAccessObject();
-
-        //        final Collection<Contribution> ss = dao.getContributions("kerry");
-        final List<Politician> politicians = dao.getPoliticians(new ZipCode("02143"));
-        //        final List<Politician> ss = dao.getPoliticians();
-
-        for (Politician politician : politicians) {
-            System.out.println(String.format(
-                    "Politician first name: %s\tlastname: %s",
-                    politician.getFirstName(),
-                    politician.getLastName()
-            ));
-        }
-        //        for (Contribution s : ss) {
-        //            System.out.println(s);
-        //        }
-    }
 }

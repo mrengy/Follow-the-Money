@@ -30,6 +30,7 @@
 
     <target name="ftm.api.build" depends="clean">
         <mkdir dir="${build.dir}"/>
+        <copydir src="resources" dest="${build.dir}/resources"/>
         <javac srcdir="${src.java.dir}"
                destdir="${build.dir}"
                source="1.5"
@@ -68,5 +69,6 @@
         <copy file="${ftm.java.api.jar}" todir="${processing.libraries.dir}"/>
         <copy file="${lib.dir}/commons-io_1.3.2.jar" todir="${processing.libraries.dir}"/>
         <copy file="${lib.dir}/commons-lang_2.3.jar" todir="${processing.libraries.dir}"/>
+        <copy file="${lib.dir}/gson-1.5.jar" todir="${processing.libraries.dir}"/>
     </target>
 </project>

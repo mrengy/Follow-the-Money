@@ -18,15 +18,18 @@ import org.ftm.impl.*;
 
 int xAlign = 20;
 int horizSpacing = 30;
+int vertSpacing = 20;
 
 ControlP5 controlP5;
 ListBox l;
+Textarea lc;
 Textfield zipCodeField;
 Textlabel textLabel;
 Textlabel politicianLabel;
 
 int cnt = 0;
 ArrayList politicians = new ArrayList();
+ArrayList contributions = new ArrayList();
 DataAccessObject dao = new SimpleDataAccessObject();
 
 void setup() {
@@ -41,8 +44,9 @@ void setup() {
   textLabel = controlP5.addTextlabel("textLabel", "0 politicians found", xAlign + zipCodeField.getWidth() + horizSpacing, zcfY + 5); 
 
   int lWidth = 120;
+  int lHeight = 100;
   int lY = 80;
-  l = controlP5.addListBox("politicianList", xAlign, lY, lWidth, 100);
+  l = controlP5.addListBox("politicianList", xAlign, lY, lWidth, lHeight);
   l.setItemHeight(15);
   l.setBarHeight(15);
 
@@ -50,26 +54,19 @@ void setup() {
   l.captionLabel().set("Politicians");
   l.captionLabel().style().marginTop = 3;
   l.valueLabel().style().marginTop = 3; // the +/- sign
-  //l.setBackgroundColor(color(100,0,0));
 
-  // Client c = null;
-//  try {
-//    politicians.addAll(dao.getPoliticians(new ZipCode("90007")));
-//  }
-//  catch (Exception e) {
-//    e.printStackTrace();
-//    exit();
-//  }
-  /*for (Issue issue : issues) ....{
-   }
-   */
-
-//  for (int i = 0; i < politicians.size(); i++){
-//    Politician politician = (Politician) politicians.get(i);
-//    l.addItem(politician.getFirstName() + ' ' + politician.getLastName(), i);
-//  }
   l.setColorBackground(color(255,128));
   l.setColorActive(color(0,0,255,128));
+
+  lc = controlP5.addTextarea("contributionList", "No politician selected", xAlign + lWidth + horizSpacing, lY + vertSpacing + textLabel.getHeight(), 300, 250);
+
+  lc.captionLabel().toUpperCase(true);
+  lc.captionLabel().set("Contributions");
+  lc.captionLabel().style().marginTop = 3;
+  lc.valueLabel().style().marginTop = 3; // the +/- sign
+
+  lc.setColorBackground(color(255,128));
+  lc.setColorActive(color(0,0,255,128));
 
   politicianLabel = controlP5.addTextlabel("politicianSelected", "No politician selected", xAlign + lWidth + horizSpacing, lY - 10); 
 }
@@ -117,12 +114,38 @@ void controlEvent(ControlEvent theEvent) {
     String politicianFullName = p.getFirstName() + ' ' + p.getLastName();
 //    println("Politician selected: " + politicianFullName);
     politicianLabel.setValue("Politician selected: " + politicianFullName);
+    updateContributionList(p);
   } else if ("zipCodeField".equals(theEvent.name())) {
     String zipCode = zipCodeField.getText();
     println("ZIP code entered: " + zipCode);
     updatePoliticianList(zipCode);
   }
 //  println(theEvent);
+}
+
+void updateContributionList(Politician politician) {
+  if (!contributions.isEmpty()) {
+    lc.setText("No politician selected");
+    contributions.clear();
+  }
+  println("politician selected: " + politician);
+  try {
+    contributions.addAll(dao.getContributions(politician.getLastName()));
+  }
+  catch (Throwable e) {
+    e.printStackTrace();
+    textLabel.setValue("Error occured: " + e.getMessage());
+    textLabel.setColorBackground(23);
+    return;
+  }
+  println("politician selected: " + politician);
+
+  StringBuilder sb = new StringBuilder();
+  for (int i = 0; i < contributions.size(); i++){
+    Contribution contribution = (Contribution) contributions.get(i);
+    sb.append(contribution.getContributorName().getIndustryCategory() + ' ' + contribution.getAmountUSDollars() + "\n");
+  }
+  lc.setText(sb.toString());
 }
 
 void updatePoliticianList(String zipCode) {

@@ -15,4 +15,13 @@ public final class Issue {
     public String getDescription() {
         return description;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Issue");
+        sb.append("{description='").append(description).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }
