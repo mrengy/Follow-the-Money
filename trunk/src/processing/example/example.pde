@@ -1,3 +1,7 @@
+import org.ftm.util.*;
+import org.ftm.impl.*;
+import org.ftm.api.*;
+
 /**
  * ControlP5 ListBox
  * listBox operates the same way as a scrollList, but
@@ -34,9 +38,9 @@ void setup() {
   //l.setBackgroundColor(color(100,0,0));
 
   // Client c = null;
-  DataAccessObject dao = new DataAccessObjectVSRest();
+  DataAccessObject dao = new SimpleDataAccessObject();
   try {
-    politicians.addAll(dao.getPoliticians());
+    politicians.addAll(dao.getPoliticians(new ZipCode("90007")));
   }
   catch (Exception e) {
     e.printStackTrace();
@@ -48,7 +52,7 @@ void setup() {
 
   for (int i = 0; i < politicians.size(); i++){
     Politician politician = (Politician) politicians.get(i);
-    l.addItem(politician.getName(),i);
+    l.addItem(politician.getFirstName() + ' ' + politician.getLastName(), i);
   }
   l.setColorBackground(color(255,128));
   l.setColorActive(color(0,0,255,128));
@@ -93,7 +97,8 @@ void controlEvent(ControlEvent theEvent) {
   if (theEvent.isGroup()) {
     // an event from a group e.g. scrollList
     int idx = (int)theEvent.group().value();
-    println("Politician selected: " + ((Politician) politicians.get(idx)).getName());
+    Politician p = (Politician) politicians.get(idx);
+    println("Politician selected: " + p.getFirstName() + ' ' + p.getLastName());
   }
 }
 
