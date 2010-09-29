@@ -16,46 +16,62 @@ import org.ftm.api.*;
 import java.util.*;
 import org.ftm.impl.*;
 
-ControlP5 controlP5;
+int xAlign = 20;
+int horizSpacing = 30;
 
+ControlP5 controlP5;
 ListBox l;
+Textfield zipCodeField;
+Textlabel textLabel;
+Textlabel politicianLabel;
+
 int cnt = 0;
 ArrayList politicians = new ArrayList();
-
+DataAccessObject dao = new SimpleDataAccessObject();
 
 void setup() {
-  size(400,400);
+  size(600, 400);
   frameRate(30);
   controlP5 = new ControlP5(this);
-  l = controlP5.addListBox("myList",100,40,120,120);
+  int zcfY = 20;
+  zipCodeField = controlP5.addTextfield("zipCodeField", xAlign, zcfY, 120, 20);
+  zipCodeField.setAutoClear(false);
+  zipCodeField.setLabel("ZIP Code");
+  
+  textLabel = controlP5.addTextlabel("textLabel", "0 politicians found", xAlign + zipCodeField.getWidth() + horizSpacing, zcfY + 5); 
+
+  int lWidth = 120;
+  int lY = 80;
+  l = controlP5.addListBox("politicianList", xAlign, lY, lWidth, 100);
   l.setItemHeight(15);
   l.setBarHeight(15);
 
   l.captionLabel().toUpperCase(true);
-  l.captionLabel().set("something else");
+  l.captionLabel().set("Politicians");
   l.captionLabel().style().marginTop = 3;
   l.valueLabel().style().marginTop = 3; // the +/- sign
   //l.setBackgroundColor(color(100,0,0));
 
   // Client c = null;
-  DataAccessObject dao = new SimpleDataAccessObject();
-  try {
-    politicians.addAll(dao.getPoliticians(new ZipCode("90007")));
-  }
-  catch (Exception e) {
-    e.printStackTrace();
-    exit();
-  }
+//  try {
+//    politicians.addAll(dao.getPoliticians(new ZipCode("90007")));
+//  }
+//  catch (Exception e) {
+//    e.printStackTrace();
+//    exit();
+//  }
   /*for (Issue issue : issues) ....{
    }
    */
 
-  for (int i = 0; i < politicians.size(); i++){
-    Politician politician = (Politician) politicians.get(i);
-    l.addItem(politician.getFirstName() + ' ' + politician.getLastName(), i);
-  }
+//  for (int i = 0; i < politicians.size(); i++){
+//    Politician politician = (Politician) politicians.get(i);
+//    l.addItem(politician.getFirstName() + ' ' + politician.getLastName(), i);
+//  }
   l.setColorBackground(color(255,128));
   l.setColorActive(color(0,0,255,128));
+
+  politicianLabel = controlP5.addTextlabel("politicianSelected", "No politician selected", xAlign + lWidth + horizSpacing, lY - 10); 
 }
 
 void keyPressed() {
@@ -94,13 +110,47 @@ void controlEvent(ControlEvent theEvent) {
   // if (theEvent.isGroup())
   // to avoid an error message from controlP5.
 
-  if (theEvent.isGroup()) {
+  if ("politicianList".equals(theEvent.name())) {
     // an event from a group e.g. scrollList
     int idx = (int)theEvent.group().value();
     Politician p = (Politician) politicians.get(idx);
-    println("Politician selected: " + p.getFirstName() + ' ' + p.getLastName());
+    String politicianFullName = p.getFirstName() + ' ' + p.getLastName();
+//    println("Politician selected: " + politicianFullName);
+    politicianLabel.setValue("Politician selected: " + politicianFullName);
+  } else if ("zipCodeField".equals(theEvent.name())) {
+    String zipCode = zipCodeField.getText();
+    println("ZIP code entered: " + zipCode);
+    updatePoliticianList(zipCode);
   }
+//  println(theEvent);
 }
+
+void updatePoliticianList(String zipCode) {
+  if (!politicians.isEmpty()) {
+    for (int i = 0; i < politicians.size(); i++){
+      Politician politician = (Politician) politicians.get(i);
+      l.removeItem(politician.getFirstName() + ' ' + politician.getLastName());
+    }
+    politicians.clear();
+  }
+  politicianLabel.setValue("No politician selected");
+  try {
+    politicians.addAll(dao.getPoliticians(new ZipCode(zipCode)));
+  }
+  catch (Exception e) {
+    e.printStackTrace();
+    textLabel.setValue("Error occured: " + e.getMessage());
+    textLabel.setColorBackground(23);
+    return;
+  }
+  
+  for (int i = 0; i < politicians.size(); i++){
+    Politician politician = (Politician) politicians.get(i);
+    l.addItem(politician.getFirstName() + ' ' + politician.getLastName(), i);
+  }
+  textLabel.setValue(politicians.size() + " politicians found");
+}
+
 
 void draw() {
   background(128);
