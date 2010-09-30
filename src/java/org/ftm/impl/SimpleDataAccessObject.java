@@ -301,5 +301,4 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         }
         return sb.toString();
     }
-
 }

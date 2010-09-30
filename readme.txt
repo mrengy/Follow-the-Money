@@ -21,5 +21,9 @@ http://transparencydata.com/api/1.0/contributions.json?apikey=160f59b8c6ea40cca6
 wc -l /Users/hujol/Downloads/contributions.all.csv
 40,504,851 /Users/hujol/Downloads/contributions.all.csv
 
+-- Votesmart
+getting bills candidate voted for:
+http://api.votesmart.org/Votes.getByOfficial?key=1ebd4d39454987ed3d3712cacdfd9e87&candidateId=12
+
 -- Issues
 For a ZIP code there might be 100s of candidates returned how we get all of them? Do we get all of them?

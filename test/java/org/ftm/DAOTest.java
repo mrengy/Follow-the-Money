@@ -22,10 +22,7 @@ final class DAOTest {
         // Bad because I expose methods that one should not access!
         //        final SimpleDataAccessObject dao = new SimpleDataAccessObject();
 
-        //        final Collection<Contribution> ss = dao.getContributions("kerry");
         final List<Politician> politicians = dao.getPoliticians(new ZipCode("02143"));
-        //        final List<Politician> ss = dao.getPoliticians();
-
         for (Politician politician : politicians) {
             System.out.println(String.format(
                     "Politician first name: %s\tlastname: %s",
@@ -33,9 +30,7 @@ final class DAOTest {
                     politician.getLastName()
             ));
         }
-        //        for (Contribution s : ss) {
-        //            System.out.println(s);
-        //        }
+
         final List<Issue> issues = dao.getIssues();
         for (Issue issue : issues) {
             System.out.println("issue = " + issue);
