@@ -22,8 +22,12 @@ wc -l /Users/hujol/Downloads/contributions.all.csv
 40,504,851 /Users/hujol/Downloads/contributions.all.csv
 
 -- Votesmart
-getting bills candidate voted for:
-http://api.votesmart.org/Votes.getByOfficial?key=1ebd4d39454987ed3d3712cacdfd9e87&candidateId=12
+Get official ID first:
+http://api.votesmart.org/Candidates.getByLastname?key=1ebd4d39454987ed3d3712cacdfd9e87&lastName=kerry
+
+then getting bills candidate voted for:
+http://api.votesmart.org/Votes.getByOfficial?key=1ebd4d39454987ed3d3712cacdfd9e87&candidateId=32795
+
 
 -- Issues
 For a ZIP code there might be 100s of candidates returned how we get all of them? Do we get all of them?
