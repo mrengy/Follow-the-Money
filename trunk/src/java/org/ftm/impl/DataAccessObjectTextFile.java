@@ -1,6 +1,7 @@
 package org.ftm.impl;
 
 import org.apache.commons.lang.StringUtils;
+import org.ftm.api.Bill;
 import org.ftm.api.Contribution;
 import org.ftm.api.DataAccessObject;
 import org.ftm.api.Issue;
@@ -101,6 +102,10 @@ public final class DataAccessObjectTextFile implements DataAccessObject {
 
     public List<Politician> getPoliticians(ZipCode zipCode) throws Exception {
         throw new IllegalStateException("org.ftm.impl.DataAccessObjectTextFile.getPoliticians Not implemented");
+    }
+
+    public List<Bill> getBills(Politician p) throws Exception {
+        throw new IllegalStateException("org.ftm.impl.DataAccessObjectTextFile.getBills Not implemented");
     }
 
     public static void main(String[] args) throws Exception {

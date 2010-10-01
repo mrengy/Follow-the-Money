@@ -23,9 +23,11 @@ int vertSpacing = 20;
 ControlP5 controlP5;
 ListBox l;
 Textarea lc;
+Textarea lb;
 Textfield zipCodeField;
 Textlabel textLabel;
 Textlabel politicianLabel;
+Textlabel billLabel;
 
 int cnt = 0;
 ArrayList politicians = new ArrayList();
@@ -33,7 +35,7 @@ ArrayList contributions = new ArrayList();
 DataAccessObject dao = new SimpleDataAccessObject();
 
 void setup() {
-  size(600, 400);
+  size(800, 500);
   frameRate(30);
   controlP5 = new ControlP5(this);
   int zcfY = 20;
@@ -69,6 +71,18 @@ void setup() {
   lc.setColorActive(color(0,0,255,128));
 
   politicianLabel = controlP5.addTextlabel("politicianSelected", "No politician selected", xAlign + lWidth + horizSpacing, lY - 10); 
+
+  billLabel = controlP5.addTextlabel("billLabel", "No politician ID available", xAlign + lWidth + horizSpacing + 300 + horizSpacing, lY - 10); 
+
+  lb = controlP5.addTextarea("billList", "No politician selected", (xAlign + lWidth + horizSpacing) + 300 + horizSpacing, lY + vertSpacing + textLabel.getHeight(), 300, 250);
+
+  lb.captionLabel().toUpperCase(true);
+  lb.captionLabel().set("Bills");
+  lb.captionLabel().style().marginTop = 3;
+  lb.valueLabel().style().marginTop = 3; // the +/- sign
+
+  lb.setColorBackground(color(255,128));
+  lb.setColorActive(color(0,0,255,128));
 }
 
 void keyPressed() {
@@ -115,12 +129,39 @@ void controlEvent(ControlEvent theEvent) {
 //    println("Politician selected: " + politicianFullName);
     politicianLabel.setValue("Politician selected: " + politicianFullName);
     updateContributionList(p);
+    updateBillList(p);
   } else if ("zipCodeField".equals(theEvent.name())) {
     String zipCode = zipCodeField.getText();
     println("ZIP code entered: " + zipCode);
     updatePoliticianList(zipCode);
   }
 //  println(theEvent);
+}
+
+void updateBillList(Politician politician) {
+  if (!politician.hasId()) {
+    billLabel.setValue("Cannot get politician ID!");
+    return;
+  }
+
+  billLabel.setValue("Politician ID: " + politician.getId());
+  
+  ArrayList bills;
+  try {
+    bills = new ArrayList(dao.getBills(politician));
+  } catch (Throwable e) {
+    e.printStackTrace();
+    billLabel.setValue("Error occured: " + e.getMessage());
+    billLabel.setColorBackground(23);
+    return;
+  }
+  
+  StringBuilder sb = new StringBuilder();
+  for (int i = 0; i < bills.size(); i++){
+    Bill bill = (Bill) bills.get(i);
+    sb.append(bill.getTitle() + ' ' + bill.getStage() + ' ' + bill.getVote().name() + "\n");
+  }
+  lb.setText(sb.toString());
 }
 
 void updateContributionList(Politician politician) {

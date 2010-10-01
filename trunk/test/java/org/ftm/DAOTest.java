@@ -1,5 +1,6 @@
 package org.ftm;
 
+import org.ftm.api.Bill;
 import org.ftm.api.Contribution;
 import org.ftm.api.DataAccessObject;
 import org.ftm.api.Issue;
@@ -39,6 +40,11 @@ final class DAOTest {
         final Collection<Contribution> contributions = dao.getContributions("kerry");
         for (Contribution contribution : contributions) {
             System.out.println("contrib: " + contribution);
+        }
+
+        final List<Bill> bills = dao.getBills(new Politician(32795, "Berry", "Deborah"));
+        for (Bill bill : bills) {
+            System.out.println("bill: " + bill);
         }
     }
 }

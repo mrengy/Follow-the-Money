@@ -10,6 +10,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.ftm.api.Bill;
 import org.ftm.api.Contribution;
 import org.ftm.api.Contributor;
 import org.ftm.api.DataAccessObject;
@@ -37,7 +38,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +50,7 @@ import java.util.Map;
  */
 public final class SimpleDataAccessObject implements DataAccessObject {
 
-    private static final String FTM_API_KEY = "1ebd4d39454987ed3d3712cacdfd9e87";
+    private static final String VS_API_KEY = "1ebd4d39454987ed3d3712cacdfd9e87";
     private static final String HOST = "api.votesmart.org";
     private static final String URI_ACCESS = "http://%s/%s?key=%s%s";
 
@@ -58,13 +58,13 @@ public final class SimpleDataAccessObject implements DataAccessObject {
             URI_ACCESS,
             HOST,
             "Votes.getCategories",
-            FTM_API_KEY,
+            VS_API_KEY,
             "&year=%s"
     );
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     public Collection<Contribution> getContributions(final String politicianName) throws Exception {
-        final StringReader reader = new StringReader(downloadContent("http://transparencydata.com/api/1.0/contributions.json?apikey=160f59b8c6ea40cca6ed1c709179d647&contributor_state=md|va&recipient_ft=" + politicianName.toLowerCase() + "&cycle=2008"));
+        final Reader reader = new StringReader(downloadContent("http://transparencydata.com/api/1.0/contributions.json?apikey=160f59b8c6ea40cca6ed1c709179d647&contributor_state=md|va&recipient_ft=" + politicianName.toLowerCase() + "&cycle=2008"));
 
         //        final Reader reader = new FileReader(new File("resources/contributions.json"));
 
@@ -74,16 +74,6 @@ public final class SimpleDataAccessObject implements DataAccessObject {
             }
         };
         return loadContribution(reader, filter);
-    }
-
-    /**
-     * This method is only for testing and should not be used by 3rd party!
-     *
-     * @param id
-     * @return
-     */
-    public List<Politician> getPoliticians(int id) {
-        return Collections.emptyList();
     }
 
     private static Collection<Contribution> loadContribution(Reader reader, Filter<Contribution> filter) throws IOException {
@@ -214,7 +204,7 @@ public final class SimpleDataAccessObject implements DataAccessObject {
             URI_ACCESS,
             HOST,
             "Officials.getStatewide",
-            FTM_API_KEY,
+            VS_API_KEY,
             ""
     );
 
@@ -222,20 +212,84 @@ public final class SimpleDataAccessObject implements DataAccessObject {
             URI_ACCESS,
             HOST,
             "Officials.getByZip",
-            FTM_API_KEY,
-            ""
+            VS_API_KEY,
+            "&zip5="
     );
 
+    private static final String GET_BILLS_BY_CANDIDATE_ID = String.format(
+            URI_ACCESS,
+            HOST,
+            "Votes.getByOfficial",
+            VS_API_KEY,
+            "&candidateId="
+    );
+
+    /**
+     * Uses the VoteSmart API to get the politicians.
+     *
+     * @return
+     * @throws Exception
+     */
     public List<Politician> getPoliticians() throws Exception {
         final String xmlDoc = downloadContent(GET_CANDIDATES);
 
         return getPoliticians(xmlDoc);
     }
 
+    /**
+     * Uses the VoteSmart API to get the politicians.
+     *
+     * @param zipCode
+     * @return
+     * @throws Exception
+     */
     public List<Politician> getPoliticians(ZipCode zipCode) throws Exception {
-        final String xmlDoc = downloadContent(GET_CANDIDATES_BY_ZIP_CODE + "&zip5=" + zipCode.getZip5());
+        final String xmlDoc = downloadContent(GET_CANDIDATES_BY_ZIP_CODE + zipCode.getZip5());
 
         return getPoliticians(xmlDoc);
+    }
+
+    public List<Bill> getBills(Politician p) throws Exception {
+        final String xmlDoc = downloadContent(GET_BILLS_BY_CANDIDATE_ID + p.getId());
+
+        return getBills(xmlDoc);
+    }
+
+    private List<Bill> getBills(String xmlDoc) throws ParserConfigurationException, IOException, SAXException {
+        final ByteArrayInputStream bis = new ByteArrayInputStream(xmlDoc.getBytes("UTF-8"));
+        //        FileInputStream bis = new FileInputStream(new File("/Users/hujol/Projects/followthemoney/sf/resources", "pvs-api-candidates.xml"));
+        final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(bis);
+        final NodeList nodes = doc.getChildNodes();
+        final List<Bill> bills = new ArrayList<Bill>(8);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            final Node node = nodes.item(i);
+            final NodeList attributes = node.getChildNodes();
+            final int l = attributes.getLength();
+            for (int j = 0; j < l; j++) {
+                final Node att = attributes.item(j);
+                String nodeName = att.getNodeName().toLowerCase();
+                if ("bill".equals(nodeName)) {
+                    NodeList candidatesAttributes = att.getChildNodes();
+                    String title = null;
+                    String stage = null;
+                    Bill.Vote vote = Bill.Vote.YES;
+                    for (int k = 0; k < candidatesAttributes.getLength(); k++) {
+                        Node node1 = candidatesAttributes.item(k);
+                        String name = node1.getNodeName();
+                        String content = node1.getTextContent();
+                        if ("title".equalsIgnoreCase(name)) {
+                            title = content;
+                        } else if ("stage".equalsIgnoreCase(name)) {
+                            stage = content;
+                        } else if ("vote".equalsIgnoreCase(name)) {
+                            vote = "yes".equalsIgnoreCase(content)? Bill.Vote.YES : Bill.Vote.NO;
+                        }
+                    }
+                    bills.add(new Bill(title, stage, vote));
+                }
+            }
+        }
+        return bills;
     }
 
     private List<Politician> getPoliticians(String xmlDoc) throws SAXException, IOException, ParserConfigurationException {
@@ -255,6 +309,7 @@ public final class SimpleDataAccessObject implements DataAccessObject {
                     NodeList candidatesAttributes = att.getChildNodes();
                     String firstName = null;
                     String lastName = null;
+                    int candidateId = -1;
                     for (int k = 0; k < candidatesAttributes.getLength(); k++) {
                         Node node1 = candidatesAttributes.item(k);
                         String name = node1.getNodeName();
@@ -263,9 +318,11 @@ public final class SimpleDataAccessObject implements DataAccessObject {
                             firstName = content;
                         } else if ("lastName".equalsIgnoreCase(name)) {
                             lastName = content;
+                        } else if ("candidateId".equalsIgnoreCase(name)) {
+                            candidateId = Integer.valueOf(content);
                         }
                     }
-                    politicians.add(new Politician(lastName, firstName));
+                    politicians.add(new Politician(candidateId, lastName, firstName));
                 }
             }
         }

@@ -8,10 +8,34 @@ public final class Politician {
 
     private final String lastName;
     private final String firstName;
+    private final int id;
 
     public Politician(String lastName, String firstName) {
+        this.id = -1;
         this.lastName = lastName;
         this.firstName = firstName;
+    }
+
+    public Politician(int id, String lastName, String firstName) {
+        this.id = id;
+        this.lastName = lastName;
+        this.firstName = firstName;
+    }
+
+    public boolean hasId() {
+        return -1 != id;
+    }
+
+    /**
+     * @return the candidate ID
+     * @throws IllegalStateException if {@link #hasId()} returns false.
+     */
+    public int getId() throws IllegalStateException {
+        if (!hasId()) {
+            throw new IllegalStateException("This instance does not have an ID. Call hasId() before calling this method.");
+        }
+
+        return id;
     }
 
     public String getLastName() {
