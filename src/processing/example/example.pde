@@ -11,7 +11,6 @@ import org.ftm.api.*;
  */
 
 import controlP5.*;
-import processing.net.*;
 import org.ftm.api.*;
 import java.util.*;
 import org.ftm.impl.*;
