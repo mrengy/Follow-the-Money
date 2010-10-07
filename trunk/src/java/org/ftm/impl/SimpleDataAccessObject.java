@@ -64,7 +64,9 @@ public final class SimpleDataAccessObject implements DataAccessObject {
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     public Collection<Contribution> getContributions(final String politicianName) throws Exception {
-        final Reader reader = new StringReader(downloadContent("http://transparencydata.com/api/1.0/contributions.json?apikey=160f59b8c6ea40cca6ed1c709179d647&contributor_state=md|va&recipient_ft=" + politicianName.toLowerCase() + "&cycle=2008"));
+        final Reader reader = new StringReader(downloadContent(
+                "http://transparencydata.com/api/1.0/contributions.json?apikey=160f59b8c6ea40cca6ed1c709179d647&contributor_state=md|va" +
+                        "&recipient_ft=" + politicianName.toLowerCase() + "&amount=>|1000&per_page=100000&cycle=2008"));
 
         //        final Reader reader = new FileReader(new File("resources/contributions.json"));
 
@@ -221,7 +223,7 @@ public final class SimpleDataAccessObject implements DataAccessObject {
             HOST,
             "Votes.getByOfficial",
             VS_API_KEY,
-            "&candidateId="
+            "&year=2008&&candidateId="
     );
 
     /**
@@ -282,7 +284,7 @@ public final class SimpleDataAccessObject implements DataAccessObject {
                         } else if ("stage".equalsIgnoreCase(name)) {
                             stage = content;
                         } else if ("vote".equalsIgnoreCase(name)) {
-                            vote = "yes".equalsIgnoreCase(content)? Bill.Vote.YES : Bill.Vote.NO;
+                            vote = "y".equalsIgnoreCase(content) ? Bill.Vote.YES : Bill.Vote.NO;
                         }
                     }
                     bills.add(new Bill(title, stage, vote));

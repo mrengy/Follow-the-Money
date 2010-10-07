@@ -37,7 +37,7 @@ final class DAOTest {
             System.out.println("issue = " + issue);
         }
 
-        final Collection<Contribution> contributions = dao.getContributions("kerry");
+        final Collection<Contribution> contributions = dao.getContributions("Patrick");
         for (Contribution contribution : contributions) {
             System.out.println("contrib: " + contribution);
         }
