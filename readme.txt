@@ -31,3 +31,6 @@ http://api.votesmart.org/Votes.getByOfficial?key=1ebd4d39454987ed3d3712cacdfd9e8
 
 -- Issues
 For a ZIP code there might be 100s of candidates returned how we get all of them? Do we get all of them?
+
+
+No relationship between the contributors and the issues voted by candidates: there is a need for FTM tool!
