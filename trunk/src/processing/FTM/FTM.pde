@@ -15,7 +15,7 @@ import org.ftm.api.*;
 import java.util.*;
 import org.ftm.impl.*;
 
-static int xAlign = 20;
+int xAlign = 20;
 static int horizSpacing = 30;
 static int vertSpacing = 20;
 static int lWidth = 120;
@@ -25,6 +25,7 @@ static int lY = 80;
 
 ControlP5 controlP5;
 
+ZipCodePanel zipCodePanel;
 // Politician panel
 PoliticianPanel politicianPanel;
 
@@ -37,8 +38,9 @@ void setup() {
   size(800, 500);
   frameRate(30);
   controlP5 = new ControlP5(this);
-  
+  zipCodePanel = new ZipCodePanel(controlP5);
   politicianPanel = new PoliticianPanel(controlP5);
+  politicianPanel.hide();
 }
 
 void controlEvent(ControlEvent theEvent) {
@@ -49,13 +51,16 @@ void controlEvent(ControlEvent theEvent) {
   // if (theEvent.isGroup())
   // to avoid an error message from controlP5.
 
-  if ("politicianList".equals(theEvent.name())) {
+  if ("politicianButton".equals(theEvent.name())) {
+    politicianPanel.show();
+  } 
+  else if ("politicianList".equals(theEvent.name())) {
     int idx = (int)theEvent.group().value();
     Politician p = politicianPanel.getSelectedPolitician(idx);
     //    // an event from a group e.g. scrollList
 
 //    Politician p = (Politician) politicians.get(idx);
-//    politicianPanel.setPoliticianSelected(p);
+    politicianPanel.setPoliticianSelected(p);
 //    updateContributionList(p);
 //    updateBillList(p);
     if (politicianPanel.isVisible()) 
@@ -64,7 +69,8 @@ void controlEvent(ControlEvent theEvent) {
       politicianPanel.show();
       
     println("politician selected " + p);
-  } else if ("zipCodeField".equals(theEvent.name())) {
+  } 
+  else if ("zipCodeField".equals(theEvent.name())) {
     String zipCode = theEvent.stringValue();
     println("ZIP code entered: " + zipCode);
     updatePoliticianList(zipCode);
@@ -124,6 +130,7 @@ void controlEvent(ControlEvent theEvent) {
 //}
 
 void updatePoliticianList(String zipCode) {
+  politicianPanel.show();
   List politicians = new ArrayList();
   politicianPanel.setPoliticianSelected(null);
   try {
@@ -134,7 +141,6 @@ void updatePoliticianList(String zipCode) {
     politicianPanel.setPoliticians(politicians);
     return;
   }
-  
   politicianPanel.setPoliticians(politicians);
 }
 

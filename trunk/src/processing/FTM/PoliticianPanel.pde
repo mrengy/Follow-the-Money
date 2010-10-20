@@ -3,9 +3,8 @@ class PoliticianPanel {
   ListBox l;
   Textarea lc;
   Textarea lb;
-  Textfield zipCodeField;
   Textlabel textLabel;
-  Textlabel politicianLabel;
+  Button politicianLabel;
   List politicians = new ArrayList();
   ControlP5 controlP5;
   boolean isVisible = false;
@@ -16,16 +15,10 @@ class PoliticianPanel {
   }
   
   void show() {
-    if (null == zipCodeField) {
-      zipCodeField = controlP5.addTextfield("zipCodeField", xAlign, zcfY, 120, 20);
-      zipCodeField.setAutoClear(false);
-      zipCodeField.setLabel("ZIP Code");
-    }
-  
-    textLabel = controlP5.addTextlabel("textLabel", "0 politicians found", xAlign + zipCodeField.getWidth() + horizSpacing, zcfY + 5); 
+    textLabel = controlP5.addTextlabel("textLabel", "0 politicians found", xAlign + lWidth + horizSpacing, zcfY); 
   
     if (null == l) {
-        l = controlP5.addListBox("politicianList", xAlign, lY, lWidth, lHeight);
+        l = controlP5.addListBox("politicianList", xAlign + lWidth + horizSpacing, lY, lWidth, lHeight);
         l.setItemHeight(15);
         l.setBarHeight(15);
     }
@@ -38,7 +31,7 @@ class PoliticianPanel {
     l.setColorBackground(color(255,128));
     l.setColorActive(color(0,0,255,128));
   
-    lc = controlP5.addTextarea("contributionList", "No politician selected", xAlign + lWidth + horizSpacing, lY + vertSpacing + textLabel.getHeight(), 300, 250);
+    lc = controlP5.addTextarea("contributionList", "No politician selected", xAlign + lWidth + horizSpacing, lY + vertSpacing + lHeight, 300, 250);
   
     lc.captionLabel().toUpperCase(true);
     lc.captionLabel().set("Contributions");
@@ -48,9 +41,14 @@ class PoliticianPanel {
     lc.setColorBackground(color(255,128));
     lc.setColorActive(color(0,0,255,128));
   
-    politicianLabel = controlP5.addTextlabel("politicianSelected", "No politician selected", xAlign + lWidth + horizSpacing, lY - 10); 
-  
-    lb = controlP5.addTextarea("billList", "No politician selected", (xAlign + lWidth + horizSpacing) + 300 + horizSpacing, lY + vertSpacing + textLabel.getHeight(), 300, 250);
+    if (null == politicianLabel) {
+      politicianLabel = controlP5.addButton("No politician selected");
+      politicianLabel.setValueLabel("politicianButton"); 
+      politicianLabel.setWidth(120); 
+      politicianLabel.setPosition(xAlign, lY - 10); 
+    }
+    
+    lb = controlP5.addTextarea("billList", "No politician selected", (xAlign + lWidth + horizSpacing) + 300 + horizSpacing, lY + vertSpacing + lHeight, 300, 250);
   
     lb.captionLabel().toUpperCase(true);
     lb.captionLabel().set("Bills");
@@ -67,12 +65,15 @@ class PoliticianPanel {
   }
   
   void hide() {
-//    controlP5.remove("zipCodeField");
 //    zipCodeField = null;
     controlP5.remove("textLabel");
 //    controlP5.remove("politicianList");
+//    l = null;
+    
     controlP5.remove("contributionList");
-    controlP5.remove("politicianSelected");
+//    controlP5.remove("politicianSelected");
+//    politicianLabel = null;
+
     controlP5.remove("billList");
     isVisible = false;
   }
@@ -80,9 +81,10 @@ class PoliticianPanel {
   Politician getSelectedPolitician(int index) {
     return (Politician) this.politicians.get(index);
   }
+
+  String text;
   
   void setPoliticianSelected(Politician p) {
-    String text;
     if (null == p) {
       text = "No politician selected";
       if (!politicians.isEmpty()) {
@@ -94,9 +96,9 @@ class PoliticianPanel {
     } else {
       String politicianFullName = p.getFirstName() + ' ' + p.getLastName();
   //    println("Politician selected: " + politicianFullName);
-      text = "Politician selected: " + politicianFullName;
+      text = politicianFullName;
     }
-    politicianLabel.setValue(text);
+    politicianLabel.setLabel(text);
   }
   
   void setPoliticians(List politicians) {
