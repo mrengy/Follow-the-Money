@@ -15,15 +15,18 @@ import org.ftm.api.*;
 import java.util.*;
 import org.ftm.impl.*;
 
-int xAlign = 20;
-int horizSpacing = 30;
-int vertSpacing = 20;
+static int xAlign = 20;
+static int horizSpacing = 30;
+static int vertSpacing = 20;
+static int lWidth = 120;
+static int lHeight = 100;
+static int zcfY = 20;
+static int lY = 80;
 
 ControlP5 controlP5;
 
 // Politician panel
 PoliticianPanel politicianPanel;
-
 
 
 int cnt = 0;
@@ -47,12 +50,20 @@ void controlEvent(ControlEvent theEvent) {
   // to avoid an error message from controlP5.
 
   if ("politicianList".equals(theEvent.name())) {
-//    // an event from a group e.g. scrollList
-//    int idx = (int)theEvent.group().value();
+    int idx = (int)theEvent.group().value();
+    Politician p = politicianPanel.getSelectedPolitician(idx);
+    //    // an event from a group e.g. scrollList
+
 //    Politician p = (Politician) politicians.get(idx);
 //    politicianPanel.setPoliticianSelected(p);
 //    updateContributionList(p);
 //    updateBillList(p);
+    if (politicianPanel.isVisible()) 
+      politicianPanel.hide();
+    else
+      politicianPanel.show();
+      
+    println("politician selected " + p);
   } else if ("zipCodeField".equals(theEvent.name())) {
     String zipCode = theEvent.stringValue();
     println("ZIP code entered: " + zipCode);
@@ -113,14 +124,14 @@ void controlEvent(ControlEvent theEvent) {
 //}
 
 void updatePoliticianList(String zipCode) {
-  ArrayList politicians = new ArrayList();
+  List politicians = new ArrayList();
   politicianPanel.setPoliticianSelected(null);
   try {
     politicians.addAll(dao.getPoliticians(new ZipCode(zipCode)));
   }
   catch (Exception e) {
     e.printStackTrace();
-    politicianPanel.setPoliticians((List) null);
+    politicianPanel.setPoliticians(politicians);
     return;
   }
   
