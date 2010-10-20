@@ -6,23 +6,29 @@ class PoliticianPanel {
   Textfield zipCodeField;
   Textlabel textLabel;
   Textlabel politicianLabel;
-  ArrayList politicians = new ArrayList();
+  List politicians = new ArrayList();
+  ControlP5 controlP5;
+  boolean isVisible = false;
 
-
-  PoliticianPanel(ControlP5 controlPF5) {
-    int zcfY = 20;
-    zipCodeField = controlP5.addTextfield("zipCodeField", xAlign, zcfY, 120, 20);
-    zipCodeField.setAutoClear(false);
-    zipCodeField.setLabel("ZIP Code");
-    
+  PoliticianPanel(ControlP5 controlP5) {
+    this.controlP5 = controlP5;
+    show();
+  }
+  
+  void show() {
+    if (null == zipCodeField) {
+      zipCodeField = controlP5.addTextfield("zipCodeField", xAlign, zcfY, 120, 20);
+      zipCodeField.setAutoClear(false);
+      zipCodeField.setLabel("ZIP Code");
+    }
+  
     textLabel = controlP5.addTextlabel("textLabel", "0 politicians found", xAlign + zipCodeField.getWidth() + horizSpacing, zcfY + 5); 
   
-    int lWidth = 120;
-    int lHeight = 100;
-    int lY = 80;
-    l = controlP5.addListBox("politicianList", xAlign, lY, lWidth, lHeight);
-    l.setItemHeight(15);
-    l.setBarHeight(15);
+    if (null == l) {
+        l = controlP5.addListBox("politicianList", xAlign, lY, lWidth, lHeight);
+        l.setItemHeight(15);
+        l.setBarHeight(15);
+    }
   
     l.captionLabel().toUpperCase(true);
     l.captionLabel().set("Politicians");
@@ -53,6 +59,26 @@ class PoliticianPanel {
   
     lb.setColorBackground(color(255,128));
     lb.setColorActive(color(0,0,255,128));
+    isVisible = true;
+  }
+  
+  boolean isVisible() {
+    return isVisible;
+  }
+  
+  void hide() {
+//    controlP5.remove("zipCodeField");
+//    zipCodeField = null;
+    controlP5.remove("textLabel");
+//    controlP5.remove("politicianList");
+    controlP5.remove("contributionList");
+    controlP5.remove("politicianSelected");
+    controlP5.remove("billList");
+    isVisible = false;
+  }
+  
+  Politician getSelectedPolitician(int index) {
+    return (Politician) this.politicians.get(index);
   }
   
   void setPoliticianSelected(Politician p) {
