@@ -1,10 +1,11 @@
 class PoliticianPanel {
   
+  Textfield zipCodeField;
+
   ListBox l;
   Textarea lc;
   Textarea lb;
   Textlabel textLabel;
-  Button politicianLabel;
   List politicians = new ArrayList();
   ControlP5 controlP5;
   boolean isVisible = false;
@@ -15,7 +16,15 @@ class PoliticianPanel {
   }
   
   void show() {
-    textLabel = controlP5.addTextlabel("textLabel", "0 politicians found", xAlign + lWidth + horizSpacing, zcfY); 
+    if (null == zipCodeField) {
+      zipCodeField = controlP5.addTextfield("zipCodeField", xAlign + lWidth + horizSpacing, zcfY, 120, 20);
+      zipCodeField.setAutoClear(false);
+      zipCodeField.setLabel("ZIP Code");
+    }
+
+    if (null == textLabel) {
+      textLabel = controlP5.addTextlabel("textLabel", "0 politicians found", xAlign + lWidth + 2 * horizSpacing + 120, zcfY);
+    }
   
     if (null == l) {
         l = controlP5.addListBox("politicianList", xAlign + lWidth + horizSpacing, lY, lWidth, lHeight);
@@ -31,32 +40,25 @@ class PoliticianPanel {
     l.setColorBackground(color(255,128));
     l.setColorActive(color(0,0,255,128));
   
-    lc = controlP5.addTextarea("contributionList", "No politician selected", xAlign + lWidth + horizSpacing, lY + vertSpacing + lHeight, 300, 250);
+//    lc = controlP5.addTextarea("contributionList", "No politician selected", xAlign + lWidth + horizSpacing, lY, 300, 250);
+//  
+//    lc.captionLabel().toUpperCase(true);
+//    lc.captionLabel().set("Contributions");
+//    lc.captionLabel().style().marginTop = 3;
+//    lc.valueLabel().style().marginTop = 3; // the +/- sign
+//  
+//    lc.setColorBackground(color(255,128));
+//    lc.setColorActive(color(0,0,255,128));
   
-    lc.captionLabel().toUpperCase(true);
-    lc.captionLabel().set("Contributions");
-    lc.captionLabel().style().marginTop = 3;
-    lc.valueLabel().style().marginTop = 3; // the +/- sign
-  
-    lc.setColorBackground(color(255,128));
-    lc.setColorActive(color(0,0,255,128));
-  
-    if (null == politicianLabel) {
-      politicianLabel = controlP5.addButton("No politician selected");
-      politicianLabel.setValueLabel("politicianButton"); 
-      politicianLabel.setWidth(120); 
-      politicianLabel.setPosition(xAlign, lY - 10); 
-    }
-    
-    lb = controlP5.addTextarea("billList", "No politician selected", (xAlign + lWidth + horizSpacing) + 300 + horizSpacing, lY + vertSpacing + lHeight, 300, 250);
-  
-    lb.captionLabel().toUpperCase(true);
-    lb.captionLabel().set("Bills");
-    lb.captionLabel().style().marginTop = 3;
-    lb.valueLabel().style().marginTop = 3; // the +/- sign
-  
-    lb.setColorBackground(color(255,128));
-    lb.setColorActive(color(0,0,255,128));
+//    lb = controlP5.addTextarea("billList", "No politician selected", (xAlign + lWidth + horizSpacing) + 300 + horizSpacing, lY + vertSpacing + lHeight, 300, 250);
+//  
+//    lb.captionLabel().toUpperCase(true);
+//    lb.captionLabel().set("Bills");
+//    lb.captionLabel().style().marginTop = 3;
+//    lb.valueLabel().style().marginTop = 3; // the +/- sign
+//  
+//    lb.setColorBackground(color(255,128));
+//    lb.setColorActive(color(0,0,255,128));
     isVisible = true;
   }
   
@@ -65,16 +67,12 @@ class PoliticianPanel {
   }
   
   void hide() {
-//    zipCodeField = null;
+    controlP5.remove("zipCodeField");
+    zipCodeField = null;
     controlP5.remove("textLabel");
-//    controlP5.remove("politicianList");
-//    l = null;
-    
-    controlP5.remove("contributionList");
-//    controlP5.remove("politicianSelected");
-//    politicianLabel = null;
-
-    controlP5.remove("billList");
+    textLabel = null;
+    controlP5.remove("politicianList");
+    l = null;
     isVisible = false;
   }
   
@@ -84,27 +82,15 @@ class PoliticianPanel {
 
   String text;
   
-  void setPoliticianSelected(Politician p) {
-    if (null == p) {
-      text = "No politician selected";
-      if (!politicians.isEmpty()) {
-        for (int i = 0; i < politicians.size(); i++){
-          Politician politician = (Politician) politicians.get(i);
-          l.removeItem(politician.getFirstName() + ' ' + politician.getLastName());
-        }
-      }
-    } else {
-      String politicianFullName = p.getFirstName() + ' ' + p.getLastName();
-  //    println("Politician selected: " + politicianFullName);
-      text = politicianFullName;
-    }
-    politicianLabel.setLabel(text);
-  }
-  
   void setPoliticians(List politicians) {
     if (null == politicians) {
       textLabel.setValue("No politicians available");
     } else {
+      println(l);
+      for (int i = 0; i < this.politicians.size(); i++){
+        Politician politician = (Politician) this.politicians.get(i);
+        l.removeItem(politician.getFirstName() + ' ' + politician.getLastName());
+      }
       this.politicians = politicians;
       for (int i = 0; i < politicians.size(); i++){
         Politician politician = (Politician) politicians.get(i);
@@ -114,3 +100,4 @@ class PoliticianPanel {
     }
   }
 }
+
