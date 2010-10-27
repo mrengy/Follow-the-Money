@@ -14,12 +14,14 @@ class Navigation {
   }
   
   void show() {
+    
     if (null == politicianLabel) {
       politicianLabel = controlP5.addButton("No politician selected");
       politicianLabel.setId(1); 
       politicianLabel.setWidth(120); 
       politicianLabel.setPosition(xAlign, zcfY); 
     }
+    
     if (null == contributorButton) {
       contributorButton = controlP5.addButton("No contributor selected");
       contributorButton.setId(2); 
