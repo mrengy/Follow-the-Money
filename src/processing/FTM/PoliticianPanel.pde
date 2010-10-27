@@ -72,7 +72,7 @@ class PoliticianPanel {
   boolean isVisible() {
     return isVisible;
   }
-  
+
   void hide() {
     controlP5.remove("zipCodeField");
     zipCodeField = null;
@@ -96,10 +96,7 @@ class PoliticianPanel {
       textLabel.setValue("No politicians available");
     } else {
       println(l);
-      for (int i = 0; i < this.politicians.size(); i++){
-        Politician politician = (Politician) this.politicians.get(i);
-        l.removeItem(politician.getFirstName() + ' ' + politician.getLastName());
-      }
+      l.clear();
       this.politicians = politicians;
       for (int i = 0; i < politicians.size(); i++){
         Politician politician = (Politician) politicians.get(i);
