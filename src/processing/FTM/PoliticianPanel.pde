@@ -1,6 +1,7 @@
 class PoliticianPanel {
   
   Textfield zipCodeField;
+  Textfield nameField;
 
   ListBox l;
   Textarea lc;
@@ -21,13 +22,19 @@ class PoliticianPanel {
       zipCodeField.setAutoClear(false);
       zipCodeField.setLabel("ZIP Code");
     }
+    
+    if (null == nameField) {
+      nameField = controlP5.addTextfield("nameField", xAlign + 2 * lWidth + 2 * horizSpacing, zcfY, 120, 20);
+      nameField.setAutoClear(false);
+      nameField.setLabel("Name");
+    }
 
     if (null == textLabel) {
-      textLabel = controlP5.addTextlabel("textLabel", "0 politicians found", xAlign + lWidth + 2 * horizSpacing + 120, zcfY);
+      textLabel = controlP5.addTextlabel("textLabel", "0 politicians found", xAlign + lWidth + horizSpacing, zcfY * 2 + vertSpacing + 10);
     }
   
     if (null == l) {
-        l = controlP5.addListBox("politicianList", xAlign + lWidth + horizSpacing, lY, lWidth, lHeight);
+        l = controlP5.addListBox("politicianList", xAlign + lWidth + horizSpacing, lY + vertSpacing, lWidth, lHeight);
         l.setItemHeight(15);
         l.setBarHeight(15);
     }
@@ -69,6 +76,8 @@ class PoliticianPanel {
   void hide() {
     controlP5.remove("zipCodeField");
     zipCodeField = null;
+    controlP5.remove("nameField");
+    nameField = null;
     controlP5.remove("textLabel");
     textLabel = null;
     controlP5.remove("politicianList");
