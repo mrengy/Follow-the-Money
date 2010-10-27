@@ -1,0 +1,5 @@
+2 data sets:
+
+year , month, pol name, contributor indus, contrib amount
+
+year , month, pol name, issue votes (yes or no)
