@@ -1,11 +1,19 @@
 package org.ftm.ui;
 
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventTopicSubscriber;
+import org.ftm.api.DataAccessObject;
+import org.ftm.api.Politician;
+import org.ftm.api.ZipCode;
+import org.ftm.impl.SimpleDataAccessObject;
 import processing.core.PApplet;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.JFrame;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is the starting class for the application.
@@ -20,13 +28,9 @@ public final class Main extends JFrame {
 
         setLayout(new BorderLayout());
         final PApplet embed = new VisualizationPanel();
-        final JButton button = new JButton("Visualize");
-        add(button, BorderLayout.NORTH);
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                embed.redraw();
-            }
-        });
+        MainPanel mp = new MainPanel();
+        add(mp, BorderLayout.NORTH);
+
         add(embed, BorderLayout.CENTER);
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -34,6 +38,35 @@ public final class Main extends JFrame {
         // It ensures that the animation thread is started and
         // that other internal variables are properly set.
         embed.init();
+
+        //
+        final DataAccessObject dao = new SimpleDataAccessObject();
+
+        // Event management
+        EventBus.subscribe("redraw", new EventTopicSubscriber() {
+            public void onEvent(String s, Object o) {
+                embed.redraw();
+            }
+        });
+        //        final List<Object> subscribers = EventBus.getSubscribers("redraw");
+        EventBus.subscribe("zipcode", new EventTopicSubscriber() {
+            public void onEvent(String s, Object o) {
+                if(o instanceof String) {
+                    String zipCode = (String) o;
+                    final List<Politician> politicians = new ArrayList<Politician>();
+                    Politician p = null;
+                    try {
+                        politicians.addAll(dao.getPoliticians(new ZipCode(zipCode)));
+                    }
+                    catch(Exception e) {
+                        e.printStackTrace();
+                        EventBus.publish("politiciansfound", null);
+                        return;
+                    }
+                    EventBus.publish("politiciansfound", politicians);
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {
