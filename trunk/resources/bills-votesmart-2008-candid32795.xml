@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bills>
+    <generalInfo>
+        <title>Project Vote Smart - Keyvote List</title>
+        <linkBack>http://votesmart.org/issue_keyvote.php</linkBack>
+    </generalInfo>
+    <bill>
+        <billId>6815</billId>
+        <billNumber>SF 2425</billNumber>
+        <title>Health and Human Services Appropriations</title>
+        <categories>
+            <category>
+                <categoryId>10</categoryId>
+                <name>Budget, Spending and Taxes</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>19936</actionId>
+        <stage>Conference Report Vote</stage>
+        <vote>Y</vote>
+    </bill>
+    <bill>
+        <billId>6854</billId>
+        <billNumber>SF 2432</billNumber>
+        <title>Prison and Infrastructure Funding</title>
+        <categories>
+            <category>
+                <categoryId>10</categoryId>
+                <name>Budget, Spending and Taxes</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>18938</actionId>
+        <stage>Passage</stage>
+        <vote>Y</vote>
+    </bill>
+    <bill>
+        <billId>6857</billId>
+        <billNumber>H 8672</billNumber>
+        <title>DUI Appeals</title>
+        <categories>
+            <category>
+                <categoryId>13</categoryId>
+                <name>Civil Liberties and Civil Rights</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>18951</actionId>
+        <stage>Amendment Vote</stage>
+        <vote>N</vote>
+    </bill>
+    <bill>
+        <billId>6854</billId>
+        <billNumber>SF 2432</billNumber>
+        <title>Prison and Infrastructure Funding</title>
+        <categories>
+            <category>
+                <categoryId>20</categoryId>
+                <name>Crime Issues</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>18938</actionId>
+        <stage>Passage</stage>
+        <vote>Y</vote>
+    </bill>
+    <bill>
+        <billId>6857</billId>
+        <billNumber>H 8672</billNumber>
+        <title>DUI Appeals</title>
+        <categories>
+            <category>
+                <categoryId>20</categoryId>
+                <name>Crime Issues</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>18951</actionId>
+        <stage>Amendment Vote</stage>
+        <vote>N</vote>
+    </bill>
+    <bill>
+        <billId>6815</billId>
+        <billNumber>SF 2425</billNumber>
+        <title>Health and Human Services Appropriations</title>
+        <categories>
+            <category>
+                <categoryId>38</categoryId>
+                <name>Health Issues</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>19936</actionId>
+        <stage>Conference Report Vote</stage>
+        <vote>Y</vote>
+    </bill>
+    <bill>
+        <billId>6857</billId>
+        <billNumber>H 8672</billNumber>
+        <title>DUI Appeals</title>
+        <categories>
+            <category>
+                <categoryId>44</categoryId>
+                <name>Legal Issues</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>18951</actionId>
+        <stage>Amendment Vote</stage>
+        <vote>N</vote>
+    </bill>
+    <bill>
+        <billId>6789</billId>
+        <billNumber>SF 2420</billNumber>
+        <title>Increasing Vehicle Registration Fees</title>
+        <categories>
+            <category>
+                <categoryId>10</categoryId>
+                <name>Budget, Spending and Taxes</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>19173</actionId>
+        <stage>Passage</stage>
+        <vote>N</vote>
+    </bill>
+    <bill>
+        <billId>6813</billId>
+        <billNumber>HF 2686</billNumber>
+        <title>Employee Identification Verification</title>
+        <categories>
+            <category>
+                <categoryId>11</categoryId>
+                <name>Business and Consumers</name>
+            </category>
+            <category>
+                <categoryId>40</categoryId>
+                <name>Immigration</name>
+            </category>
+            <category>
+                <categoryId>43</categoryId>
+                <name>Labor</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>18827</actionId>
+        <stage>Passage</stage>
+        <vote>Y</vote>
+    </bill>
+    <bill>
+        <billId>6789</billId>
+        <billNumber>SF 2420</billNumber>
+        <title>Increasing Vehicle Registration Fees</title>
+        <categories>
+            <category>
+                <categoryId>64</categoryId>
+                <name>Transportation Issues</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>19173</actionId>
+        <stage>Passage</stage>
+        <vote>N</vote>
+    </bill>
+    <bill>
+        <billId>6348</billId>
+        <billNumber>SF 2216</billNumber>
+        <title>State-Mandated Curriculum for Schools</title>
+        <categories>
+            <category>
+                <categoryId>27</categoryId>
+                <name>Education</name>
+            </category>
+            <category>
+                <categoryId>72</categoryId>
+                <name>Federal, State, and Local Relations</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>18269</actionId>
+        <stage>Passage With Amendment</stage>
+        <vote>Y</vote>
+    </bill>
+    <bill>
+        <billId>6764</billId>
+        <billNumber>SJR 2002</billNumber>
+        <title>Natural Resources Trust Fund</title>
+        <categories>
+            <category>
+                <categoryId>10</categoryId>
+                <name>Budget, Spending and Taxes</name>
+            </category>
+            <category>
+                <categoryId>30</categoryId>
+                <name>Environmental Issues</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>18676</actionId>
+        <stage>Passage</stage>
+        <vote>Y</vote>
+    </bill>
+    <bill>
+        <billId>6733</billId>
+        <billNumber>HF 2663</billNumber>
+        <title>Statewide Sales Tax Increase for School Infrastructure Funding</title>
+        <categories>
+            <category>
+                <categoryId>10</categoryId>
+                <name>Budget, Spending and Taxes</name>
+            </category>
+            <category>
+                <categoryId>27</categoryId>
+                <name>Education</name>
+            </category>
+            <category>
+                <categoryId>72</categoryId>
+                <name>Federal, State, and Local Relations</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>18582</actionId>
+        <stage>Passage</stage>
+        <vote>Y</vote>
+    </bill>
+    <bill>
+        <billId>6270</billId>
+        <billNumber>HF 2212</billNumber>
+        <title>Smoking Ban</title>
+        <categories>
+            <category>
+                <categoryId>11</categoryId>
+                <name>Business and Consumers</name>
+            </category>
+            <category>
+                <categoryId>13</categoryId>
+                <name>Civil Liberties and Civil Rights</name>
+            </category>
+            <category>
+                <categoryId>38</categoryId>
+                <name>Health Issues</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>18578</actionId>
+        <stage>Conference Report Vote</stage>
+        <vote>Y</vote>
+    </bill>
+    <bill>
+        <billId>6571</billId>
+        <billNumber>HF 2145</billNumber>
+        <title>Mandatory HPV Vaccination Coverage</title>
+        <categories>
+            <category>
+                <categoryId>11</categoryId>
+                <name>Business and Consumers</name>
+            </category>
+            <category>
+                <categoryId>38</categoryId>
+                <name>Health Issues</name>
+            </category>
+            <category>
+                <categoryId>75</categoryId>
+                <name>Reproductive Issues</name>
+            </category>
+            <category>
+                <categoryId>68</categoryId>
+                <name>Women's Issues</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>18201</actionId>
+        <stage>Passage</stage>
+        <vote>Y</vote>
+    </bill>
+    <bill>
+        <billId>6556</billId>
+        <billNumber>HF 2645</billNumber>
+        <title>Public Employee Collective Bargaining and Teacher Termination Policy</title>
+        <categories>
+            <category>
+                <categoryId>10</categoryId>
+                <name>Budget, Spending and Taxes</name>
+            </category>
+            <category>
+                <categoryId>27</categoryId>
+                <name>Education</name>
+            </category>
+            <category>
+                <categoryId>43</categoryId>
+                <name>Labor</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>18158</actionId>
+        <stage>Passage</stage>
+        <vote>Y</vote>
+    </bill>
+    <bill>
+        <billId>6270</billId>
+        <billNumber>HF 2212</billNumber>
+        <title>Smoking Ban</title>
+        <categories>
+            <category>
+                <categoryId>11</categoryId>
+                <name>Business and Consumers</name>
+            </category>
+            <category>
+                <categoryId>13</categoryId>
+                <name>Civil Liberties and Civil Rights</name>
+            </category>
+            <category>
+                <categoryId>38</categoryId>
+                <name>Health Issues</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>17792</actionId>
+        <stage>Concurrence Vote</stage>
+        <vote>Y</vote>
+    </bill>
+    <bill>
+        <billId>6359</billId>
+        <billNumber>HF 2359</billNumber>
+        <title>Veterans Trust Fund</title>
+        <categories>
+            <category>
+                <categoryId>10</categoryId>
+                <name>Budget, Spending and Taxes</name>
+            </category>
+            <category>
+                <categoryId>73</categoryId>
+                <name>Gambling and Gaming</name>
+            </category>
+            <category>
+                <categoryId>38</categoryId>
+                <name>Health Issues</name>
+            </category>
+            <category>
+                <categoryId>66</categoryId>
+                <name>Veterans Issues</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>17545</actionId>
+        <stage>Passage</stage>
+        <vote>Y</vote>
+    </bill>
+    <bill>
+        <billId>6270</billId>
+        <billNumber>HF 2212</billNumber>
+        <title>Smoking Ban</title>
+        <categories>
+            <category>
+                <categoryId>11</categoryId>
+                <name>Business and Consumers</name>
+            </category>
+            <category>
+                <categoryId>13</categoryId>
+                <name>Civil Liberties and Civil Rights</name>
+            </category>
+            <category>
+                <categoryId>38</categoryId>
+                <name>Health Issues</name>
+            </category>
+        </categories>
+        <officeId>8</officeId>
+        <office>State House</office>
+        <actionId>17313</actionId>
+        <stage>Passage</stage>
+        <vote>Y</vote>
+    </bill>
+</bills>

@@ -34,3 +34,5 @@ For a ZIP code there might be 100s of candidates returned how we get all of them
 
 
 No relationship between the contributors and the issues voted by candidates: there is a need for FTM tool!
+
+a VoteSmart category is an issue, which has many bills.
