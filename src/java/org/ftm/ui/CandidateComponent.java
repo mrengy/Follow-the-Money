@@ -2,16 +2,19 @@ package org.ftm.ui;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventTopicSubscriber;
-import org.ftm.api.Politician;
+import org.ftm.api.Candidate;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -22,18 +25,24 @@ import java.util.List;
  * @author <font size=-1 color="#a3a3a3">Johnny Hujol</font>
  * @since Oct 30, 2010
  */
-final class MainPanel extends JPanel {
+final class CandidateComponent extends JPanel implements EventTopicSubscriber {
 
     private final JTextField zipCode = new JTextField(25);
     private final JList politiciansFound = new JList();
 
-    MainPanel() {
-        setLayout(new BorderLayout());
-        add(zipCode, BorderLayout.NORTH);
-        add(politiciansFound, BorderLayout.CENTER);
-        final JButton jb = new JButton("Redraw");
-        add(jb, BorderLayout.SOUTH);
+    CandidateComponent() {
+        zipCode.setPreferredSize(new Dimension(200, 25));
+        politiciansFound.setPreferredSize(new Dimension(200, 150));
 
+        JPanel p = new JPanel();
+        p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
+        p.add(zipCode);
+        p.add(new JScrollPane(politiciansFound));
+        final JButton jb = new JButton("Redraw");
+        p.add(jb);
+        p.add(Box.createVerticalGlue());
+
+        add(p);
         politiciansFound.setCellRenderer(new MyListCellRenderer());
 
         // Some initial data
@@ -58,20 +67,24 @@ final class MainPanel extends JPanel {
         EventBus.subscribe("politiciansfound", new EventTopicSubscriber() {
             public void onEvent(String s, Object o) {
                 if(o instanceof List) {
-                    List<Politician> politicians = (List<Politician>) o;
-                    politiciansFound.setListData(politicians.toArray(new Politician[politicians.size()]));
+                    List<Candidate> candidates = (List<Candidate>) o;
+                    politiciansFound.setListData(candidates.toArray(new Candidate[candidates.size()]));
                 }
             }
         });
+    }
+
+    public void onEvent(String s, Object o) {
+        throw new IllegalStateException("org.ftm.ui.CandidateComponent.onEvent Not implemented");
     }
 
     private static class MyListCellRenderer extends DefaultListCellRenderer {
 
         public Component getListCellRendererComponent(JList jList, Object o, int i, boolean b, boolean b1) {
             final String text;
-            if(o instanceof Politician) {
-                Politician p = (Politician) o;
-                text = p.getFirstName() + " " + p.getLastName();
+            if(o instanceof Candidate) {
+                Candidate p = (Candidate) o;
+                text = p.getFirstName() + ' ' + p.getLastName();
             }
             else {
                 text = o.toString();

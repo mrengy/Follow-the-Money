@@ -8,16 +8,16 @@ import java.util.List;
  * @since Jun 21, 2010
  */
 public interface DataAccessObject {
-    //    Collection<Politician> getCandidates() throws Exception;
+    //    Collection<Candidate> getCandidates() throws Exception;
     //
 
     Collection<Contribution> getContributions(String politicianName) throws Exception;
 
     List<Issue> getIssues() throws Exception;
 
-    List<Politician> getPoliticians() throws Exception;
+    List<Candidate> getPoliticians() throws Exception;
 
-    List<Politician> getPoliticians(ZipCode zipCode) throws Exception;
+    List<Candidate> getPoliticians(ZipCode zipCode) throws Exception;
 
-    List<Bill> getBills(Politician p) throws Exception;
+    List<Bill> getBills(Candidate p) throws Exception;
 }                                           

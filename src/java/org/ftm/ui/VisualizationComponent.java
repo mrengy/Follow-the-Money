@@ -1,5 +1,7 @@
 package org.ftm.ui;
 
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventTopicSubscriber;
 import processing.core.PApplet;
 
 /**
@@ -8,7 +10,7 @@ import processing.core.PApplet;
  * @author <font size=-1 color="#a3a3a3">Johnny Hujol</font>
  * @since Oct 26, 2010
  */
-final class VisualizationPanel extends PApplet {
+final class VisualizationComponent extends PApplet implements EventTopicSubscriber {
     float px, py, px2, py2;
     float angle, angle2;
     float radius = 100;
@@ -16,9 +18,13 @@ final class VisualizationPanel extends PApplet {
     float frequency2 = 2;
     float x, x2;
 
+    VisualizationComponent() {
+        EventBus.subscribe("redraw", this);
+    }
+
     public void setup() {
         // original setup code here ...
-//        size(400, 400);
+        //        size(400, 400);
 
         // prevent thread from starving everything else
         noLoop();
@@ -81,6 +87,10 @@ final class VisualizationPanel extends PApplet {
         // do something based on mouse movement
 
         // update the screen (run draw once)
+        redraw();
+    }
+
+    public void onEvent(String s, Object o) {
         redraw();
     }
 }

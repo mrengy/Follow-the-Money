@@ -1,19 +1,22 @@
 package org.ftm.ui;
 
 import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventTopicSubscriber;
 import org.ftm.api.DataAccessObject;
-import org.ftm.api.Politician;
-import org.ftm.api.ZipCode;
 import org.ftm.impl.SimpleDataAccessObject;
 import processing.core.PApplet;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.plaf.metal.MetalLookAndFeel;
+import javax.swing.plaf.metal.OceanTheme;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Toolkit;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This is the starting class for the application.
@@ -23,58 +26,80 @@ import java.util.List;
  */
 public final class Main extends JFrame {
 
+    private final JPanel placeHolder = new JPanel();
+    private final CandidateComponent candidateCp = new CandidateComponent();
+    private final IssueComponent issueCp = new IssueComponent();
+    private final ContributionComponent contributionCp = new ContributionComponent();
+    private final PApplet visu = new VisualizationComponent();
+
     public Main() {
-        super("VisualizationPanel PApplet");
+        super("VisualizationComponent");
+
+        // DAO
+        final DataAccessObject dao = new SimpleDataAccessObject();
+        final Controller controller = new Controller(this, dao, new Model());
+
+        final NavigationComponent mp = new NavigationComponent();
+
+        placeHolder.setLayout(new BorderLayout());
 
         setLayout(new BorderLayout());
-        final PApplet embed = new VisualizationPanel();
-        MainPanel mp = new MainPanel();
-        add(mp, BorderLayout.NORTH);
+        add(mp, BorderLayout.WEST);
 
-        add(embed, BorderLayout.CENTER);
+        add(this.placeHolder, BorderLayout.CENTER);
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        // important to call this whenever embedding a PApplet.
-        // It ensures that the animation thread is started and
-        // that other internal variables are properly set.
-        embed.init();
-
-        //
-        final DataAccessObject dao = new SimpleDataAccessObject();
-
-        // Event management
-        EventBus.subscribe("redraw", new EventTopicSubscriber() {
-            public void onEvent(String s, Object o) {
-                embed.redraw();
-            }
-        });
-        //        final List<Object> subscribers = EventBus.getSubscribers("redraw");
-        EventBus.subscribe("zipcode", new EventTopicSubscriber() {
-            public void onEvent(String s, Object o) {
-                if(o instanceof String) {
-                    String zipCode = (String) o;
-                    final List<Politician> politicians = new ArrayList<Politician>();
-                    Politician p = null;
-                    try {
-                        politicians.addAll(dao.getPoliticians(new ZipCode(zipCode)));
-                    }
-                    catch(Exception e) {
-                        e.printStackTrace();
-                        EventBus.publish("politiciansfound", null);
-                        return;
-                    }
-                    EventBus.publish("politiciansfound", politicians);
-                }
-            }
-        });
+        EventBus.publish("politicianSearch", null);
     }
 
     public static void main(String[] args) {
-        final Main f = new Main();
-        f.setResizable(true);
-        f.setSize(800, 600);
-        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-        f.setLocation((int) (screen.getWidth() - f.getWidth()) / 2, (int) (screen.getHeight() - f.getHeight()) / 2);
-        f.setVisible(true);
+        Runnable runnable = new Runnable() {
+            public void run() {
+                try {
+                    UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                    MetalLookAndFeel.setCurrentTheme(new OceanTheme());
+                }
+                catch(Exception e) {
+                    Logger.getLogger("org.ftm.ui.Main").log(Level.WARNING, null, e);
+                }
+
+                final Main f = new Main();
+                f.setResizable(true);
+                f.setSize(800, 600);
+                Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+                f.setLocation((int) (screen.getWidth() - f.getWidth()) / 2, (int) (screen.getHeight() - f.getHeight()) / 2);
+                f.setVisible(true);
+            }
+        };
+        EventQueue.invokeLater(runnable);
+    }
+
+    public void setPoliticianSearch() {
+        switchComponent(candidateCp);
+    }
+
+    private void switchComponent(Component component) {
+        placeHolder.removeAll();
+        placeHolder.add(component, BorderLayout.CENTER);
+        placeHolder.validate();
+        this.validate();
+        this.invalidate();
+        this.repaint();
+    }
+
+    public void setIssueSearch() {
+        switchComponent(issueCp);
+    }
+
+    public void setContributionSearch() {
+        switchComponent(contributionCp);
+    }
+
+    public void setVisualization() {
+        // important to call this whenever embedding a PApplet.
+        // It ensures that the animation thread is started and
+        // that other internal variables are properly set.
+        visu.init();
+        switchComponent(visu);
     }
 }

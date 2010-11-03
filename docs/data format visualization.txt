@@ -1,5 +1,5 @@
 2 data sets:
 
-year , month, pol name, contributor indus, contrib amount
+year , month, candidate name, contributor indus, contrib amount in $
 
-year , month, pol name, issue votes (yes or no)
+year , month, candidate name, issue, votes (yes or no)

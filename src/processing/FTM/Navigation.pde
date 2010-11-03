@@ -16,7 +16,7 @@ class Navigation {
   void show() {
     
     if (null == politicianLabel) {
-      politicianLabel = controlP5.addButton("No politician selected");
+      politicianLabel = controlP5.addButton("No candidate selected");
       politicianLabel.setId(1); 
       politicianLabel.setWidth(120); 
       politicianLabel.setPosition(xAlign, zcfY); 
@@ -45,7 +45,7 @@ class Navigation {
   void setPoliticianSelected(Politician p) {
     String text;
     if (null == p) {
-      text = "No politician selected";
+      text = "No candidate selected";
     } else {
     String politicianFullName = p.getFirstName() + ' ' + p.getLastName();
       //    println("Politician selected: " + politicianFullName);

@@ -7,7 +7,7 @@ class PoliticianPanel {
   Textarea lc;
   Textarea lb;
   Textlabel textLabel;
-  List politicians = new ArrayList();
+  List candidates = new ArrayList();
   ControlP5 controlP5;
   boolean isVisible = false;
 
@@ -30,7 +30,7 @@ class PoliticianPanel {
     }
 
     if (null == textLabel) {
-      textLabel = controlP5.addTextlabel("textLabel", "0 politicians found", xAlign + lWidth + horizSpacing, zcfY * 2 + vertSpacing + 10);
+      textLabel = controlP5.addTextlabel("textLabel", "0 candidates found", xAlign + lWidth + horizSpacing, zcfY * 2 + vertSpacing + 10);
     }
   
     if (null == l) {
@@ -47,7 +47,7 @@ class PoliticianPanel {
     l.setColorBackground(color(255,128));
     l.setColorActive(color(0,0,255,128));
   
-//    lc = controlP5.addTextarea("contributionList", "No politician selected", xAlign + lWidth + horizSpacing, lY, 300, 250);
+//    lc = controlP5.addTextarea("contributionList", "No candidate selected", xAlign + lWidth + horizSpacing, lY, 300, 250);
 //  
 //    lc.captionLabel().toUpperCase(true);
 //    lc.captionLabel().set("Contributions");
@@ -57,7 +57,7 @@ class PoliticianPanel {
 //    lc.setColorBackground(color(255,128));
 //    lc.setColorActive(color(0,0,255,128));
   
-//    lb = controlP5.addTextarea("billList", "No politician selected", (xAlign + lWidth + horizSpacing) + 300 + horizSpacing, lY + vertSpacing + lHeight, 300, 250);
+//    lb = controlP5.addTextarea("billList", "No candidate selected", (xAlign + lWidth + horizSpacing) + 300 + horizSpacing, lY + vertSpacing + lHeight, 300, 250);
 //  
 //    lb.captionLabel().toUpperCase(true);
 //    lb.captionLabel().set("Bills");
@@ -86,23 +86,23 @@ class PoliticianPanel {
   }
   
   Politician getSelectedPolitician(int index) {
-    return (Politician) this.politicians.get(index);
+    return (Politician) this.candidates.get(index);
   }
 
   String text;
   
-  void setPoliticians(List politicians) {
-    if (null == politicians) {
-      textLabel.setValue("No politicians available");
+  void setPoliticians(List candidates) {
+    if (null == candidates) {
+      textLabel.setValue("No candidates available");
     } else {
       println(l);
       l.clear();
-      this.politicians = politicians;
-      for (int i = 0; i < politicians.size(); i++){
-        Politician politician = (Politician) politicians.get(i);
-        l.addItem(politician.getFirstName() + ' ' + politician.getLastName(), i);
+      this.candidates = candidates;
+      for (int i = 0; i < candidates.size(); i++){
+        Politician candidate = (Politician) candidates.get(i);
+        l.addItem(candidate.getFirstName() + ' ' + candidate.getLastName(), i);
       }
-      textLabel.setValue(politicians.size() + " politicians found");
+      textLabel.setValue(candidates.size() + " candidates found");
     }
   }
 }

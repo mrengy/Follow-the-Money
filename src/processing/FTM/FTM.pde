@@ -88,7 +88,7 @@ void controlEvent(ControlEvent theEvent) {
 //    else
 //      politicianPanel.show();
       
-    println("politician selected " + p);
+    println("candidate selected " + p);
   }
   else if (1 == theEvent.controller().id()) {
     politicianPanel.show();
@@ -118,17 +118,17 @@ void controlEvent(ControlEvent theEvent) {
 //  println(theEvent);
 }
 
-//void updateBillList(Politician politician) {
-//  if (!politician.hasId()) {
-//    billLabel.setValue("Cannot get politician ID!");
+//void updateBillList(Politician candidate) {
+//  if (!candidate.hasId()) {
+//    billLabel.setValue("Cannot get candidate ID!");
 //    return;
 //  }
 //
-//  billLabel.setValue("Politician ID: " + politician.getId());
+//  billLabel.setValue("Politician ID: " + candidate.getId());
 //  
 //  ArrayList bills;
 //  try {
-//    bills = new ArrayList(dao.getBills(politician));
+//    bills = new ArrayList(dao.getBills(candidate));
 //  } catch (Throwable e) {
 //    e.printStackTrace();
 //    billLabel.setValue("Error occured: " + e.getMessage());
@@ -144,14 +144,14 @@ void controlEvent(ControlEvent theEvent) {
 //  lb.setText(sb.toString());
 //}
 
-//void updateContributionList(Politician politician) {
+//void updateContributionList(Politician candidate) {
 //  if (!contributions.isEmpty()) {
-//    lc.setText("No politician selected");
+//    lc.setText("No candidate selected");
 //    contributions.clear();
 //  }
-//  println("politician selected: " + politician);
+//  println("candidate selected: " + candidate);
 //  try {
-//    contributions.addAll(dao.getContributions(politician.getLastName()));
+//    contributions.addAll(dao.getContributions(candidate.getLastName()));
 //  }
 //  catch (Throwable e) {
 //    e.printStackTrace();
@@ -159,7 +159,7 @@ void controlEvent(ControlEvent theEvent) {
 //    textLabel.setColorBackground(23);
 //    return;
 //  }
-//  println("politician selected: " + politician);
+//  println("candidate selected: " + candidate);
 //
 //  StringBuilder sb = new StringBuilder();
 //  for (int i = 0; i < contributions.size(); i++){
@@ -171,18 +171,18 @@ void controlEvent(ControlEvent theEvent) {
 
 void updatePoliticianList(String zipCode) {
   politicianPanel.show();
-  List politicians = new ArrayList();
+  List candidates = new ArrayList();
   Politician p = null;
   navigation.setPoliticianSelected(p);
   try {
-    politicians.addAll(dao.getPoliticians(new ZipCode(zipCode)));
+    candidates.addAll(dao.getPoliticians(new ZipCode(zipCode)));
   }
   catch (Exception e) {
     e.printStackTrace();
-    politicianPanel.setPoliticians(politicians);
+    politicianPanel.setPoliticians(candidates);
     return;
   }
-  politicianPanel.setPoliticians(politicians);
+  politicianPanel.setPoliticians(candidates);
 }
 
 void draw() {

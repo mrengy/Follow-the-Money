@@ -14,11 +14,13 @@ public final class Bill {
     private final String title;
     private final String stage;
     private final Vote vote;
+    private final String issue;
 
-    public Bill(String title, String stage, Vote vote) {
+    public Bill(String title, String stage, Vote vote, String issue) {
         this.title = title;
         this.stage = stage;
         this.vote = vote;
+        this.issue = issue;
     }
 
     public String getTitle() {
@@ -33,6 +35,10 @@ public final class Bill {
         return vote;
     }
 
+    public String getIssue() {
+        return issue;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -40,6 +46,7 @@ public final class Bill {
         sb.append("{title='").append(title).append('\'');
         sb.append(", stage='").append(stage).append('\'');
         sb.append(", vote=").append(vote);
+        sb.append(", issue=").append(issue);
         sb.append('}');
         return sb.toString();
     }
