@@ -35,11 +35,11 @@ final class Model {
         this.issues = Collections.unmodifiableList(issues);
     }
 
-    public synchronized Candidate getPoliticianSelected() {
+    public synchronized Candidate getCandidateSelected() {
         return candidateSelected;
     }
 
-    public synchronized void setPoliticianSelected(Candidate candidateSelected) {
+    public synchronized void setCandidateSelected(Candidate candidateSelected) {
         this.candidateSelected = candidateSelected;
     }
 

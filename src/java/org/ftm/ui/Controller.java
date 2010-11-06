@@ -24,31 +24,33 @@ final class Controller implements EventTopicSubscriber {
         this.dao = dao;
         this.model = model;
 
-        EventBus.subscribe("zipcode", this);
-        EventBus.subscribe("politicianSearch", this);
-        EventBus.subscribe("issueSearch", this);
-        EventBus.subscribe("contributionSearch", this);
-        EventBus.subscribe("visualization", this);
+        EventBus.subscribeStrongly("zipcode", this);
+        EventBus.subscribeStrongly("candidateSearch", this);
+        EventBus.subscribeStrongly("issueSearch", this);
+        EventBus.subscribeStrongly("contributionSearch", this);
+        EventBus.subscribeStrongly("visualization", this);
     }
 
     public void onEvent(String s, Object o) {
         if("zipcode".equals(s)) {
+
+            // Set the zipCode in the model to remember next time we come back to candidate search
+
             String zipCode = (String) o;
             final List<Candidate> candidates = new ArrayList<Candidate>();
             Candidate p = null;
             try {
-                candidates.addAll(dao.getPoliticians(new ZipCode(zipCode)));
+                candidates.addAll(dao.getCandidates(new ZipCode(zipCode)));
             }
             catch(Exception e) {
                 e.printStackTrace();
-                EventBus.publish("politiciansfound", null);
+                EventBus.publish("candidatesfound", null);
                 return;
             }
-            EventBus.publish("politiciansfound", candidates);
+            EventBus.publish("candidatesfound", candidates);
         }
-        else if("politicianSearch".equals(s)) {
-            main.setPoliticianSearch();
-            EventBus.publish("zipcodeset", model.getZipCode());
+        else if("candidateSearch".equals(s)) {
+            main.setCandidateSearch();
         }
         else if("issueSearch".equals(s)) {
             main.setIssueSearch();
@@ -59,5 +61,14 @@ final class Controller implements EventTopicSubscriber {
         else if("visualization".equals(s)) {
             main.setVisualization();
         }
+    }
+
+    public void close() {
+        EventBus.unsubscribe("zipcode", this);
+        EventBus.unsubscribe("candidateSearch", this);
+        EventBus.unsubscribe("issueSearch", this);
+        EventBus.unsubscribe("contributionSearch", this);
+        EventBus.unsubscribe("visualization", this);
+
     }
 }

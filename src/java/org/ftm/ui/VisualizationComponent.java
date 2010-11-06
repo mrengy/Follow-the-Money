@@ -19,7 +19,7 @@ final class VisualizationComponent extends PApplet implements EventTopicSubscrib
     float x, x2;
 
     VisualizationComponent() {
-        EventBus.subscribe("redraw", this);
+        EventBus.subscribeStrongly("redraw", this);
     }
 
     public void setup() {
@@ -92,5 +92,9 @@ final class VisualizationComponent extends PApplet implements EventTopicSubscrib
 
     public void onEvent(String s, Object o) {
         redraw();
+    }
+
+    public void close() {
+        EventBus.unsubscribe("redraw", this);
     }
 }
