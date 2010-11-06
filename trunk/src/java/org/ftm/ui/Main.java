@@ -5,12 +5,15 @@ import org.ftm.api.DataAccessObject;
 import org.ftm.impl.SimpleDataAccessObject;
 import processing.core.PApplet;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -26,7 +29,7 @@ import java.util.logging.Logger;
  */
 public final class Main extends JFrame {
 
-    private final JPanel placeHolder = new JPanel();
+    private final JPanel placeHolder = new JPanel(new BorderLayout());
     private final CandidateComponent candidateCp = new CandidateComponent();
     private final IssueComponent issueCp = new IssueComponent();
     private final ContributionComponent contributionCp = new ContributionComponent();
@@ -40,16 +43,20 @@ public final class Main extends JFrame {
         final Controller controller = new Controller(this, dao, new Model());
 
         final NavigationComponent mp = new NavigationComponent();
+        //        mp.setPreferredSize(new Dimension(200, (int) mp.getSize().getHeight()));
+        //        mp.setBackground(Color.red);
 
-        placeHolder.setLayout(new BorderLayout());
-
-        setLayout(new BorderLayout());
-        add(mp, BorderLayout.WEST);
-
-        add(this.placeHolder, BorderLayout.CENTER);
-
+        final JPanel pp = new JPanel();
+        pp.setLayout(new BoxLayout(pp, BoxLayout.LINE_AXIS));
+        pp.add(Box.createHorizontalStrut(20));
+        pp.add(mp);
+        pp.add(Box.createHorizontalStrut(5));
+        pp.add(this.placeHolder);
+        pp.add(Box.createHorizontalGlue());
+        pp.setBackground(Color.yellow);
+        setContentPane(pp);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        EventBus.publish("politicianSearch", null);
+        EventBus.publish("candidateSearch", null);
     }
 
     public static void main(String[] args) {
@@ -74,7 +81,7 @@ public final class Main extends JFrame {
         EventQueue.invokeLater(runnable);
     }
 
-    public void setPoliticianSearch() {
+    public void setCandidateSearch() {
         switchComponent(candidateCp);
     }
 

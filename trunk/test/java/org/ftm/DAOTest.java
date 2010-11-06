@@ -20,7 +20,7 @@ final class DAOTest {
         // Bad because I expose methods that one should not access!
         //        final SimpleDataAccessObject dao = new SimpleDataAccessObject();
 
-        //        final List<Candidate> candidates = dao.getPoliticians(new ZipCode("02143"));
+        //        final List<Candidate> candidates = dao.getCandidates(new ZipCode("02143"));
         //        for (Candidate candidate : candidates) {
         //            System.out.println(String.format(
         //                    "Candidate first name: %s\tlastname: %s",

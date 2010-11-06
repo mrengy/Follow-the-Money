@@ -66,15 +66,15 @@ public final class SimpleDataAccessObject implements DataAccessObject {
     );
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    public Collection<Contribution> getContributions(final String politicianName) throws Exception {
+    public Collection<Contribution> getContributions(final String candidateName) throws Exception {
         //        final Reader reader = new StringReader(downloadContent(
         //                "http://transparencydata.com/api/1.0/contributions.json?apikey=160f59b8c6ea40cca6ed1c709179d647&contributor_state=md|va" +
-        //                        "&recipient_ft=" + politicianName.toLowerCase() + "&amount=>|1000&per_page=100000&cycle=2008"));
+        //                        "&recipient_ft=" + candidateName.toLowerCase() + "&amount=>|1000&per_page=100000&cycle=2008"));
 
         final Reader reader = new FileReader(new File("resources/contributions.json"));
 
         Filter<Contribution> filter;
-        if(null == politicianName || 0 == politicianName.trim().length()) {
+        if(null == candidateName || 0 == candidateName.trim().length()) {
             filter = new Filter<Contribution>() {
                 public boolean accept(Contribution c) {
                     return true;
@@ -84,7 +84,7 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         else {
             filter = new Filter<Contribution>() {
                 public boolean accept(Contribution c) {
-                    return c.getRecipientName().getLastName().toLowerCase().contains(politicianName.toLowerCase());
+                    return c.getRecipientName().getLastName().toLowerCase().contains(candidateName.toLowerCase());
                 }
             };
         }
@@ -258,28 +258,28 @@ public final class SimpleDataAccessObject implements DataAccessObject {
     );
 
     /**
-     * Uses the VoteSmart API to get the politicians.
+     * Uses the VoteSmart API to get the candidates.
      *
      * @return
      * @throws Exception
      */
-    public List<Candidate> getPoliticians() throws Exception {
+    public List<Candidate> getCandidates() throws Exception {
         final String xmlDoc = downloadContent(GET_CANDIDATES);
 
-        return getPoliticians(xmlDoc);
+        return getCandidates(xmlDoc);
     }
 
     /**
-     * Uses the VoteSmart API to get the politicians.
+     * Uses the VoteSmart API to get the candidates.
      *
      * @param zipCode
      * @return
      * @throws Exception
      */
-    public List<Candidate> getPoliticians(ZipCode zipCode) throws Exception {
+    public List<Candidate> getCandidates(ZipCode zipCode) throws Exception {
         final String xmlDoc = downloadContent(GET_CANDIDATES_BY_ZIP_CODE + zipCode.getZip5());
 
-        return getPoliticians(xmlDoc);
+        return getCandidates(xmlDoc);
     }
 
     public List<Bill> getBills(Candidate p) throws Exception {
@@ -347,7 +347,7 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         return bills;
     }
 
-    private List<Candidate> getPoliticians(String xmlDoc) throws SAXException, IOException, ParserConfigurationException {
+    private List<Candidate> getCandidates(String xmlDoc) throws SAXException, IOException, ParserConfigurationException {
         final ByteArrayInputStream bis = new ByteArrayInputStream(xmlDoc.getBytes("UTF-8"));
         //        FileInputStream bis = new FileInputStream(new File("/Users/hujol/Projects/followthemoney/sf/resources", "pvs-api-candidates.xml"));
         final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(bis);

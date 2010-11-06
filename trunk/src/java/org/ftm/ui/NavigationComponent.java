@@ -1,7 +1,6 @@
 package org.ftm.ui;
 
 import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventTopicSubscriber;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -15,39 +14,43 @@ import java.awt.event.ActionListener;
  * @author <font size=-1 color="#a3a3a3">Johnny Hujol</font>
  * @since Oct 31, 2010
  */
-final class NavigationComponent extends JPanel implements EventTopicSubscriber {
+final class NavigationComponent extends JPanel {
 
-    private final JButton politicianB = new JButton("Candidate");
+    private final JButton candidateB = new JButton("Candidate");
     private final JButton issueB = new JButton("Issue");
     private final JButton contributionB = new JButton("Contribution");
     private final JButton visuB = new JButton("Visualize");
 
     NavigationComponent() {
-        final Dimension dim = new Dimension(300, 25);
-        politicianB.setPreferredSize(dim);
+        final Dimension dim = new Dimension(150, 25);
+        candidateB.setPreferredSize(dim);
         issueB.setPreferredSize(dim);
         contributionB.setPreferredSize(dim);
 
         // Layout
-        JPanel p = new JPanel();
-        p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
+        //        JPanel p = new JPanel();
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
-        p.add(Box.createVerticalStrut(5));
-        p.add(politicianB);
-        p.add(Box.createVerticalStrut(10));
-        p.add(issueB);
-        p.add(Box.createVerticalStrut(10));
-        p.add(contributionB);
-        p.add(Box.createVerticalStrut(10));
-        p.add(visuB);
-        p.add(Box.createVerticalStrut(10));
-        p.add(Box.createVerticalGlue());
-        add(p);
+        add(Box.createVerticalStrut(20));
+        add(candidateB);
+        add(Box.createVerticalStrut(20));
+        add(issueB);
+        add(Box.createVerticalStrut(20));
+        add(contributionB);
+        add(Box.createVerticalStrut(20));
+        add(visuB);
+        add(Box.createVerticalStrut(15));
+        add(Box.createVerticalGlue());
+
+        //        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        //        add(Box.createHorizontalStrut(20));
+        //        add(p);
+        //        add(Box.createHorizontalGlue());
 
         // Events
-        politicianB.addActionListener(new ActionListener() {
+        candidateB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                EventBus.publish("politicianSearch", null);
+                EventBus.publish("candidateSearch", null);
             }
         });
         issueB.addActionListener(new ActionListener() {
@@ -65,9 +68,5 @@ final class NavigationComponent extends JPanel implements EventTopicSubscriber {
                 EventBus.publish("visualization", null);
             }
         });
-    }
-
-    public void onEvent(String s, Object o) {
-        throw new IllegalStateException("org.ftm.ui.NavigationComponent.onEvent Not implemented");
     }
 }

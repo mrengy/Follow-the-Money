@@ -28,26 +28,26 @@ import java.util.List;
 final class CandidateComponent extends JPanel implements EventTopicSubscriber {
 
     private final JTextField zipCode = new JTextField(25);
-    private final JList politiciansFound = new JList();
+    private final JList canidatesFound = new JList();
 
     CandidateComponent() {
         zipCode.setPreferredSize(new Dimension(200, 25));
-        politiciansFound.setPreferredSize(new Dimension(200, 150));
+        canidatesFound.setPreferredSize(new Dimension(200, 150));
 
         JPanel p = new JPanel();
         p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
         p.add(zipCode);
-        p.add(new JScrollPane(politiciansFound));
+        p.add(new JScrollPane(canidatesFound));
         final JButton jb = new JButton("Redraw");
         p.add(jb);
         p.add(Box.createVerticalGlue());
 
         add(p);
-        politiciansFound.setCellRenderer(new MyListCellRenderer());
+        canidatesFound.setCellRenderer(new MyListCellRenderer());
 
         // Some initial data
-        politiciansFound.setListData(new String[]{
-            "No politicians available"
+        canidatesFound.setListData(new String[]{
+            "No candidates available"
         });
 
         // Add events
@@ -64,18 +64,18 @@ final class CandidateComponent extends JPanel implements EventTopicSubscriber {
                 EventBus.publish("redraw", null);
             }
         });
-        EventBus.subscribe("politiciansfound", new EventTopicSubscriber() {
-            public void onEvent(String s, Object o) {
-                if(o instanceof List) {
-                    List<Candidate> candidates = (List<Candidate>) o;
-                    politiciansFound.setListData(candidates.toArray(new Candidate[candidates.size()]));
-                }
-            }
-        });
+        EventBus.subscribeStrongly("candidatesfound", this);
     }
 
     public void onEvent(String s, Object o) {
-        throw new IllegalStateException("org.ftm.ui.CandidateComponent.onEvent Not implemented");
+        if(o instanceof List) {
+            List<Candidate> candidates = (List<Candidate>) o;
+            canidatesFound.setListData(candidates.toArray(new Candidate[candidates.size()]));
+        }
+    }
+
+    public void close() {
+        EventBus.unsubscribe("candidatesfound", this);
     }
 
     private static class MyListCellRenderer extends DefaultListCellRenderer {

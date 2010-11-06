@@ -11,13 +11,13 @@ public interface DataAccessObject {
     //    Collection<Candidate> getCandidates() throws Exception;
     //
 
-    Collection<Contribution> getContributions(String politicianName) throws Exception;
+    Collection<Contribution> getContributions(String candidateName) throws Exception;
 
     List<Issue> getIssues() throws Exception;
 
-    List<Candidate> getPoliticians() throws Exception;
+    List<Candidate> getCandidates() throws Exception;
 
-    List<Candidate> getPoliticians(ZipCode zipCode) throws Exception;
+    List<Candidate> getCandidates(ZipCode zipCode) throws Exception;
 
     List<Bill> getBills(Candidate p) throws Exception;
 }                                           

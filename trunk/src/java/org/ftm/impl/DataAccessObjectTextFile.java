@@ -17,7 +17,7 @@ import java.util.List;
  * @since Jun 21, 2010
  */
 public final class DataAccessObjectTextFile implements DataAccessObject {
-    public Collection<Contribution> getContributions(String politicianName) throws Exception {
+    public Collection<Contribution> getContributions(String candidateName) throws Exception {
         throw new IllegalStateException("org.ftm.impl.DataAccessObjectTextFile.getContributions Not implemented");
     }
 
@@ -78,7 +78,7 @@ public final class DataAccessObjectTextFile implements DataAccessObject {
         return issues;
     }
 
-    public List<Candidate> getPoliticians() throws Exception {
+    public List<Candidate> getCandidates() throws Exception {
         final String names =
             "Richard Shelby\n" +
                 "Jefferson Sessions, III\n" +
@@ -89,19 +89,19 @@ public final class DataAccessObjectTextFile implements DataAccessObject {
                 "R. Griffith\n" +
                 "Spencer Bachus\n" +
                 "Artur Davis";
-        final String[] politicianNames = StringUtils.split(names, "\n");
+        final String[] candidateNames = StringUtils.split(names, "\n");
         List<Candidate> candidates = new ArrayList<Candidate>(9);
-        for(String politicianName : politicianNames) {
-            if(!StringUtils.isBlank(politicianName)) {
-                final String[] strings = politicianName.split(" ");
+        for(String candidateName : candidateNames) {
+            if(!StringUtils.isBlank(candidateName)) {
+                final String[] strings = candidateName.split(" ");
                 candidates.add(new Candidate(strings[0], 2 == strings.length ? strings[1] : "n/a"));
             }
         }
         return candidates;
     }
 
-    public List<Candidate> getPoliticians(ZipCode zipCode) throws Exception {
-        throw new IllegalStateException("org.ftm.impl.DataAccessObjectTextFile.getPoliticians Not implemented");
+    public List<Candidate> getCandidates(ZipCode zipCode) throws Exception {
+        throw new IllegalStateException("org.ftm.impl.DataAccessObjectTextFile.getCandidates Not implemented");
     }
 
     public List<Bill> getBills(Candidate p) throws Exception {
@@ -113,7 +113,7 @@ public final class DataAccessObjectTextFile implements DataAccessObject {
         DataAccessObject dao = new DataAccessObjectTextFile();
 
 
-        for(Candidate candidate : dao.getPoliticians()) {
+        for(Candidate candidate : dao.getCandidates()) {
             System.out.println("candidate: " + candidate.getLastName());
         }
         //        for (Issue issue : new DataAccessObjectTextFile().getIssues()) {
