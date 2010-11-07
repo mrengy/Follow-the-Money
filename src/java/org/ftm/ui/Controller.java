@@ -6,6 +6,7 @@ import org.ftm.api.Candidate;
 import org.ftm.api.DataAccessObject;
 import org.ftm.api.ZipCode;
 
+import javax.swing.JOptionPane;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ final class Controller implements EventTopicSubscriber {
         this.model = model;
 
         EventBus.subscribeStrongly("zipcode", this);
+        EventBus.subscribeStrongly("candidateNameSearch", this);
         EventBus.subscribeStrongly("candidateSearch", this);
         EventBus.subscribeStrongly("issueSearch", this);
         EventBus.subscribeStrongly("contributionSearch", this);
@@ -33,14 +35,14 @@ final class Controller implements EventTopicSubscriber {
 
     public void onEvent(String s, Object o) {
         if("zipcode".equals(s)) {
+            // Set the zipCode in the model
+            final ZipCode zipCode = new ZipCode((String) o);
+            model.setZipCode(zipCode);
 
-            // Set the zipCode in the model to remember next time we come back to candidate search
-
-            String zipCode = (String) o;
             final List<Candidate> candidates = new ArrayList<Candidate>();
             Candidate p = null;
             try {
-                candidates.addAll(dao.getCandidates(new ZipCode(zipCode)));
+                candidates.addAll(dao.getCandidates(zipCode));
             }
             catch(Exception e) {
                 e.printStackTrace();
@@ -48,6 +50,9 @@ final class Controller implements EventTopicSubscriber {
                 return;
             }
             EventBus.publish("candidatesfound", candidates);
+        }
+        else if("candidateNameSearch".equals(s)) {
+            JOptionPane.showMessageDialog(null, "Candidate name for search " + o);
         }
         else if("candidateSearch".equals(s)) {
             main.setCandidateSearch();

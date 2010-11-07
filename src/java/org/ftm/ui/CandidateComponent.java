@@ -4,22 +4,24 @@ import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.ftm.api.Candidate;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
+
+import static org.ftm.ui.ComponentUtils.createPanelWithFixedSize;
 
 /**
  * @author <font size=-1 color="#a3a3a3">Johnny Hujol</font>
@@ -28,25 +30,54 @@ import java.util.List;
 final class CandidateComponent extends JPanel implements EventTopicSubscriber {
 
     private final JTextField zipCode = new JTextField(25);
-    private final JList canidatesFound = new JList();
+    private final JLabel zipCodeLabel = new JLabel("Zip Code");
+
+    private final JTextField candidateName = new JTextField(25);
+    private final JLabel candidateNameLabel = new JLabel("Candidate Name");
+
+    private final JLabel orLabel = new JLabel("Or");
+    private final JList candidatesFound = new JList();
+    private static final Dimension DIMENSION = new Dimension(150, 25);
 
     CandidateComponent() {
-        zipCode.setPreferredSize(new Dimension(200, 25));
-        canidatesFound.setPreferredSize(new Dimension(200, 150));
+        JComponent zipCodeSearchPanel = createZipCodePanel();
+        JComponent candidateNameSearchPanel = createCandidateNameSearchPanel();
+        JComponent candidatesFoundPanel = createCandidatesFoundPanel();
 
-        JPanel p = new JPanel();
-        p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
-        p.add(zipCode);
-        p.add(new JScrollPane(canidatesFound));
-        final JButton jb = new JButton("Redraw");
-        p.add(jb);
-        p.add(Box.createVerticalGlue());
+        zipCodeSearchPanel.setAlignmentX(LEFT_ALIGNMENT);
+        orLabel.setAlignmentX(LEFT_ALIGNMENT);
+        candidateNameSearchPanel.setAlignmentX(LEFT_ALIGNMENT);
 
-        add(p);
-        canidatesFound.setCellRenderer(new MyListCellRenderer());
+        orLabel.setPreferredSize(DIMENSION);
+        candidatesFound.setPreferredSize(new Dimension(200, 150));
+
+        final JPanel panel1 = ComponentUtils.createLineBoxLaidOutPanel();
+        panel1.add(zipCodeSearchPanel);
+        panel1.add(Box.createHorizontalGlue());
+
+        final JPanel panel2 = ComponentUtils.createLineBoxLaidOutPanel();
+        panel2.add(Box.createRigidArea(new Dimension((int) ((zipCodeSearchPanel.getPreferredSize().getWidth() - orLabel.getPreferredSize().getWidth()) / 2), 10)));
+        panel2.add(orLabel);
+        panel2.add(Box.createHorizontalGlue());
+
+        final JPanel panel3 = ComponentUtils.createLineBoxLaidOutPanel();
+        panel3.add(candidateNameSearchPanel);
+        panel3.add(Box.createHorizontalGlue());
+
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+        add(panel1);
+        add(panel2);
+        add(panel3);
+        add(candidatesFoundPanel);
+        add(Box.createVerticalGlue());
+
+        setBackground(Color.green);
+
+        candidatesFound.setCellRenderer(new MyListCellRenderer());
 
         // Some initial data
-        canidatesFound.setListData(new String[]{
+        candidatesFound.setListData(new String[]{
             "No candidates available"
         });
 
@@ -59,18 +90,79 @@ final class CandidateComponent extends JPanel implements EventTopicSubscriber {
                 }
             }
         });
-        jb.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                EventBus.publish("redraw", null);
+        candidateName.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent keyEvent) {
+                if(KeyEvent.VK_ENTER == keyEvent.getKeyCode()) {
+                    EventBus.publish("candidateNameSearch", candidateName.getText());
+                }
             }
         });
         EventBus.subscribeStrongly("candidatesfound", this);
     }
 
+    private JComponent createCandidatesFoundPanel() {
+        final JPanel p = new JPanel();
+        p.add(new JScrollPane(candidatesFound));
+        return p;
+    }
+
+    private JComponent createCandidateNameSearchPanel() {
+        final JPanel p = createPanelWithFixedSize(DIMENSION.width * 2 + 5);
+        p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
+
+        ComponentUtils.setSizes(candidateName, DIMENSION);
+        ComponentUtils.setSizes(candidateNameLabel, DIMENSION);
+
+        p.add(Box.createHorizontalStrut(20));
+        p.add(candidateNameLabel);
+        p.add(Box.createHorizontalStrut(5));
+        p.add(candidateName);
+        return p;
+    }
+
+    private JComponent createZipCodePanel() {
+        // This to make things aligned nicely
+        final JPanel p = createPanelWithFixedSize(DIMENSION.width * 2 + 5);
+        p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
+
+        ComponentUtils.setSizes(zipCodeLabel, DIMENSION);
+        ComponentUtils.setSizes(zipCode, DIMENSION);
+
+        p.add(Box.createHorizontalStrut(20));
+        p.add(zipCodeLabel);
+        p.add(Box.createHorizontalStrut(5));
+        p.add(zipCode);
+        return p;
+    }
+
+    /*
+        @Override
+        public Dimension getMinimumSize() {
+            return getPreferredSize();
+        }
+
+        @Override
+        public Dimension getMaximumSize() {
+            return getPreferredSize();
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+            final Container container = getParent();
+            if(null != container) {
+                return container.getSize();
+            }
+            else {
+                return super.getPreferredSize();
+            }
+        }
+    */
+
     public void onEvent(String s, Object o) {
         if(o instanceof List) {
             List<Candidate> candidates = (List<Candidate>) o;
-            canidatesFound.setListData(candidates.toArray(new Candidate[candidates.size()]));
+            candidatesFound.setListData(candidates.toArray(new Candidate[candidates.size()]));
         }
     }
 

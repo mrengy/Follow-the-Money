@@ -3,16 +3,15 @@ package org.ftm.ui;
 import org.bushe.swing.event.EventBus;
 import org.ftm.api.DataAccessObject;
 import org.ftm.impl.SimpleDataAccessObject;
-import processing.core.PApplet;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.UIManager;
-import javax.swing.plaf.metal.MetalLookAndFeel;
-import javax.swing.plaf.metal.OceanTheme;
-import java.awt.BorderLayout;
+import javax.swing.UnsupportedLookAndFeelException;
+import java.applet.Applet;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -27,71 +26,134 @@ import java.util.logging.Logger;
  * @author <font size=-1 color="#a3a3a3">Johnny Hujol</font>
  * @since Oct 26, 2010
  */
-public final class Main extends JFrame {
+public final class Main {
 
-    private final JPanel placeHolder = new JPanel(new BorderLayout());
-    private final CandidateComponent candidateCp = new CandidateComponent();
-    private final IssueComponent issueCp = new IssueComponent();
-    private final ContributionComponent contributionCp = new ContributionComponent();
-    private final PApplet visu = new VisualizationComponent();
+    //Specify the look and feel to use.  Valid values:
+    //null (use the default), "Metal", "System", "Motif", "GTK+"
+    final static String LOOKANDFEEL = "Metal";
+
+    private final JPanel placeHolder = new JPanel();
+    private final Component candidateCp = new CandidateComponent();
+    private final Component issueCp = new IssueComponent();
+    private final Component contributionCp = new ContributionComponent();
+    private final Applet visu = new VisualizationComponent();
+    private final JSplitPane mainPane;
 
     public Main() {
-        super("VisualizationComponent");
-
-        // DAO
         final DataAccessObject dao = new SimpleDataAccessObject();
+
         final Controller controller = new Controller(this, dao, new Model());
 
         final NavigationComponent mp = new NavigationComponent();
-        //        mp.setPreferredSize(new Dimension(200, (int) mp.getSize().getHeight()));
-        //        mp.setBackground(Color.red);
 
-        final JPanel pp = new JPanel();
-        pp.setLayout(new BoxLayout(pp, BoxLayout.LINE_AXIS));
-        pp.add(Box.createHorizontalStrut(20));
-        pp.add(mp);
-        pp.add(Box.createHorizontalStrut(5));
-        pp.add(this.placeHolder);
-        pp.add(Box.createHorizontalGlue());
-        pp.setBackground(Color.yellow);
-        setContentPane(pp);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        EventBus.publish("candidateSearch", null);
+        placeHolder.setLayout(new BoxLayout(placeHolder, BoxLayout.LINE_AXIS));
+        placeHolder.setBackground(Color.cyan);
+
+        mainPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mp, placeHolder);
+        final int dividerLocation = (int) mp.getPreferredSize().getWidth() + mp.getInsets().left + mp.getInsets().right;
+        mainPane.setDividerLocation(dividerLocation);
+        mainPane.setEnabled(false);
+        mainPane.setDividerSize(0);
+        mainPane.setBackground(Color.yellow);
     }
 
     public static void main(String[] args) {
         Runnable runnable = new Runnable() {
             public void run() {
-                try {
-                    UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-                    MetalLookAndFeel.setCurrentTheme(new OceanTheme());
-                }
-                catch(Exception e) {
-                    Logger.getLogger("org.ftm.ui.Main").log(Level.WARNING, null, e);
-                }
-
-                final Main f = new Main();
-                f.setResizable(true);
-                f.setSize(800, 600);
-                Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-                f.setLocation((int) (screen.getWidth() - f.getWidth()) / 2, (int) (screen.getHeight() - f.getHeight()) / 2);
-                f.setVisible(true);
+                createAndShowGui();
             }
         };
         EventQueue.invokeLater(runnable);
     }
 
-    public void setCandidateSearch() {
-        switchComponent(candidateCp);
+    /**
+     * Create the GUI and show it.  For thread safety,
+     * this method should be invoked from the
+     * event-dispatching thread.
+     */
+    private static void createAndShowGui() {
+        initLookAndFeel();
+
+        final JFrame f = new JFrame("Follow The Money");
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        final Main m = new Main();
+        f.setContentPane(m.mainPane);
+
+        f.setResizable(true);
+        final Dimension dim = new Dimension(800, 600);
+        f.setMinimumSize(dim);
+        f.setSize(dim);
+        final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        f.setLocation((int) (screen.getWidth() - f.getWidth()) / 2, (int) (screen.getHeight() - f.getHeight()) / 2);
+
+        f.pack();
+        f.setVisible(true);
+
+        EventBus.publish("candidateSearch", null);
+    }
+
+    private static void initLookAndFeel() {
+        if(null != LOOKANDFEEL) {
+            String lookAndFeel;
+            if("Metal".equals(LOOKANDFEEL)) {
+                lookAndFeel = UIManager.getCrossPlatformLookAndFeelClassName();
+            }
+            else if("System".equals(LOOKANDFEEL)) {
+                lookAndFeel = UIManager.getSystemLookAndFeelClassName();
+            }
+            else if("Motif".equals(LOOKANDFEEL)) {
+                lookAndFeel = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
+            }
+            else if("GTK+".equals(LOOKANDFEEL)) { //new in 1.4.2
+                lookAndFeel = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
+            }
+            else {
+                System.err.println("Unexpected value of LOOKANDFEEL specified: "
+                    + LOOKANDFEEL);
+                lookAndFeel = UIManager.getCrossPlatformLookAndFeelClassName();
+            }
+
+            try {
+                UIManager.setLookAndFeel(lookAndFeel);
+            }
+            catch(ClassNotFoundException e) {
+                System.err.println("Couldn't find class for specified look and feel:"
+                    + lookAndFeel);
+                System.err.println("Did you include the L&F library in the class path?");
+                System.err.println("Using the default look and feel.");
+                Logger.getLogger("org.ftm.ui.Main").log(Level.WARNING, null, e);
+            }
+            catch(UnsupportedLookAndFeelException e) {
+                System.err.println("Can't use the specified look and feel ("
+                    + lookAndFeel
+                    + ") on this platform.");
+                System.err.println("Using the default look and feel.");
+                Logger.getLogger("org.ftm.ui.Main").log(Level.WARNING, null, e);
+            }
+            catch(Exception e) {
+                System.err.println("Couldn't get specified look and feel ("
+                    + lookAndFeel
+                    + "), for some reason.");
+                System.err.println("Using the default look and feel.");
+                Logger.getLogger("org.ftm.ui.Main").log(Level.WARNING, null, e);
+            }
+        }
     }
 
     private void switchComponent(Component component) {
         placeHolder.removeAll();
-        placeHolder.add(component, BorderLayout.CENTER);
+        placeHolder.add(component);
+        placeHolder.add(Box.createHorizontalGlue());
+        placeHolder.invalidate();
         placeHolder.validate();
-        this.validate();
-        this.invalidate();
-        this.repaint();
+        mainPane.validate();
+        mainPane.invalidate();
+        mainPane.repaint();
+    }
+
+    public void setCandidateSearch() {
+        switchComponent(candidateCp);
     }
 
     public void setIssueSearch() {
