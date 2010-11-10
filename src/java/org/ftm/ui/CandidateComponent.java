@@ -3,6 +3,7 @@ package org.ftm.ui;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.ftm.api.Candidate;
+import org.ftm.util.Debug;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -14,11 +15,14 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Collection;
 import java.util.List;
 
 import static org.ftm.ui.ComponentUtils.createPanelWithFixedSize;
@@ -29,10 +33,10 @@ import static org.ftm.ui.ComponentUtils.createPanelWithFixedSize;
  */
 final class CandidateComponent extends JPanel implements EventTopicSubscriber {
 
-    private final JTextField zipCode = new JTextField(25);
+    private final JTextField zipCode = new JTextField(15);
     private final JLabel zipCodeLabel = new JLabel("Zip Code");
 
-    private final JTextField candidateName = new JTextField(25);
+    private final JTextField candidateName = new JTextField(15);
     private final JLabel candidateNameLabel = new JLabel("Candidate Name");
 
     private final JLabel orLabel = new JLabel("Or");
@@ -56,7 +60,7 @@ final class CandidateComponent extends JPanel implements EventTopicSubscriber {
         panel1.add(Box.createHorizontalGlue());
 
         final JPanel panel2 = ComponentUtils.createLineBoxLaidOutPanel();
-        panel2.add(Box.createRigidArea(new Dimension((int) ((zipCodeSearchPanel.getPreferredSize().getWidth() - orLabel.getPreferredSize().getWidth()) / 2), 10)));
+        panel2.add(Box.createRigidArea(new Dimension((int) ((candidateNameSearchPanel.getPreferredSize().getWidth() /*- orLabel.getPreferredSize().getWidth()*/) / 2), 10)));
         panel2.add(orLabel);
         panel2.add(Box.createHorizontalGlue());
 
@@ -69,10 +73,13 @@ final class CandidateComponent extends JPanel implements EventTopicSubscriber {
         add(panel1);
         add(panel2);
         add(panel3);
+        add(Box.createVerticalStrut(10));
         add(candidatesFoundPanel);
         add(Box.createVerticalGlue());
 
-        setBackground(Color.green);
+        if(Debug.isDebug()) {
+            setBackground(Color.green);
+        }
 
         candidatesFound.setCellRenderer(new MyListCellRenderer());
 
@@ -80,7 +87,11 @@ final class CandidateComponent extends JPanel implements EventTopicSubscriber {
         candidatesFound.setListData(new String[]{
             "No candidates available"
         });
-
+        candidatesFound.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent event) {
+                EventBus.publish("candidateselected", candidatesFound.getSelectedValue());
+            }
+        });
         // Add events
         zipCode.addKeyListener(new KeyAdapter() {
             @Override
@@ -108,7 +119,7 @@ final class CandidateComponent extends JPanel implements EventTopicSubscriber {
     }
 
     private JComponent createCandidateNameSearchPanel() {
-        final JPanel p = createPanelWithFixedSize(DIMENSION.width * 2 + 5);
+        final JPanel p = createPanelWithFixedSize(DIMENSION.width * 2 + 20);
         p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
 
         ComponentUtils.setSizes(candidateName, DIMENSION);
@@ -123,7 +134,7 @@ final class CandidateComponent extends JPanel implements EventTopicSubscriber {
 
     private JComponent createZipCodePanel() {
         // This to make things aligned nicely
-        final JPanel p = createPanelWithFixedSize(DIMENSION.width * 2 + 5);
+        final JPanel p = createPanelWithFixedSize(DIMENSION.width * 2 + 20);
         p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
 
         ComponentUtils.setSizes(zipCodeLabel, DIMENSION);
@@ -161,7 +172,7 @@ final class CandidateComponent extends JPanel implements EventTopicSubscriber {
 
     public void onEvent(String s, Object o) {
         if(o instanceof List) {
-            List<Candidate> candidates = (List<Candidate>) o;
+            Collection<Candidate> candidates = (List<Candidate>) o;
             candidatesFound.setListData(candidates.toArray(new Candidate[candidates.size()]));
         }
     }
