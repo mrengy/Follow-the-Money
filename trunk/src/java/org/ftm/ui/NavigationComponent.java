@@ -1,6 +1,11 @@
 package org.ftm.ui;
 
 import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventTopicSubscriber;
+import org.ftm.api.Candidate;
+import org.ftm.api.Contributor;
+import org.ftm.api.Issue;
+import org.ftm.util.Debug;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -22,7 +27,9 @@ final class NavigationComponent extends JPanel {
     private final JButton issueB = new JButton("Issue");
     private final JButton contributionB = new JButton("Contribution");
     private final JButton visuB = new JButton("Visualize");
-    private static final Dimension DIM = new Dimension(120, 25);
+    private static final Dimension DIM = new Dimension(140, 25);
+
+    private final EventTopicSubscriber eventSubscriber;
 
     NavigationComponent() {
         ComponentUtils.setSizes(candidateB, DIM);
@@ -48,7 +55,9 @@ final class NavigationComponent extends JPanel {
         add(visuB);
         add(Box.createVerticalGlue());
 
-        setBackground(Color.MAGENTA);
+        if(Debug.isDebug()) {
+            setBackground(Color.MAGENTA);
+        }
 
         // Events
         candidateB.addActionListener(new ActionListener() {
@@ -71,6 +80,44 @@ final class NavigationComponent extends JPanel {
                 EventBus.publish("visualization", null);
             }
         });
+
+        eventSubscriber = new EventTopicSubscriber() {
+            public void onEvent(String s, Object o) {
+                if("candidateselected".equals(s)) {
+                    if(o instanceof Candidate) {
+                        final Candidate candidate = (Candidate) o;
+                        final String text = candidate.getFirstName() + " " + candidate.getLastName();
+                        candidateB.setText(text);
+                        candidateB.setToolTipText(text);
+                    }
+                }
+                else if("issueselected".equals(s)) {
+                    if(o instanceof Issue) {
+                        final Issue issue = (Issue) o;
+                        final String text = issue.getDescription();
+                        issueB.setText(text);
+                        issueB.setToolTipText(text);
+                    }
+                }
+                else if("contributorselected".equals(s)) {
+                    if(o instanceof Contributor) {
+                        final Contributor contributor = (Contributor) o;
+                        final String text = contributor.getIndustryCategory();
+                        contributionB.setText(text);
+                        contributionB.setToolTipText(text);
+                    }
+                }
+            }
+        };
+        EventBus.subscribeStrongly("candidateselected", eventSubscriber);
+        EventBus.subscribeStrongly("issueselected", eventSubscriber);
+        EventBus.subscribeStrongly("contributorselected", eventSubscriber);
+    }
+
+    public void close() {
+        EventBus.unsubscribe("candidateselected", eventSubscriber);
+        EventBus.unsubscribe("issueselected", eventSubscriber);
+        EventBus.unsubscribe("contributorselected", eventSubscriber);
     }
 
     // Overriding the following methods allows to keep a fixed width whenever the component is re-sized.

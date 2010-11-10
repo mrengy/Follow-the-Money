@@ -3,6 +3,7 @@ package org.ftm.ui;
 import org.bushe.swing.event.EventBus;
 import org.ftm.api.DataAccessObject;
 import org.ftm.impl.SimpleDataAccessObject;
+import org.ftm.util.Debug;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -38,6 +39,7 @@ public final class Main {
     private final Component contributionCp = new ContributionComponent();
     private final Applet visu = new VisualizationComponent();
     private final JSplitPane mainPane;
+    private NavigationComponent navigation;
 
     public Main() {
         final DataAccessObject dao = new SimpleDataAccessObject();
@@ -47,14 +49,19 @@ public final class Main {
         final NavigationComponent mp = new NavigationComponent();
 
         placeHolder.setLayout(new BoxLayout(placeHolder, BoxLayout.LINE_AXIS));
-        placeHolder.setBackground(Color.cyan);
+        if(Debug.isDebug()) {
+            placeHolder.setBackground(Color.cyan);
+        }
 
-        mainPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mp, placeHolder);
+        navigation = mp;
+        mainPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, navigation, placeHolder);
         final int dividerLocation = (int) mp.getPreferredSize().getWidth() + mp.getInsets().left + mp.getInsets().right;
         mainPane.setDividerLocation(dividerLocation);
         mainPane.setEnabled(false);
         mainPane.setDividerSize(0);
-        mainPane.setBackground(Color.yellow);
+        if(Debug.isDebug()) {
+            mainPane.setBackground(Color.yellow);
+        }
     }
 
     public static void main(String[] args) {
@@ -91,6 +98,7 @@ public final class Main {
         f.setVisible(true);
 
         EventBus.publish("candidateSearch", null);
+        EventBus.publish("getissues", null);
     }
 
     private static void initLookAndFeel() {

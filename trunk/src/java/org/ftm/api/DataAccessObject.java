@@ -20,4 +20,6 @@ public interface DataAccessObject {
     List<Candidate> getCandidates(ZipCode zipCode) throws Exception;
 
     List<Bill> getBills(Candidate p) throws Exception;
-}                                           
+
+    Collection<Candidate> getCandidates(String s) throws Exception;
+}

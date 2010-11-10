@@ -28,7 +28,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -71,7 +70,7 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         //                "http://transparencydata.com/api/1.0/contributions.json?apikey=160f59b8c6ea40cca6ed1c709179d647&contributor_state=md|va" +
         //                        "&recipient_ft=" + candidateName.toLowerCase() + "&amount=>|1000&per_page=100000&cycle=2008"));
 
-        final Reader reader = new FileReader(new File("resources/contributions.json"));
+        final Reader reader = new InputStreamReader(SimpleDataAccessObject.class.getResourceAsStream("/resources/contributions.json"));
 
         Filter<Contribution> filter;
         if(null == candidateName || 0 == candidateName.trim().length()) {
@@ -241,6 +240,14 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         ""
     );
 
+    private static final String GET_CANDIDATES_BY_LEVENHSTEIN = String.format(
+        URI_ACCESS,
+        HOST,
+        "Officials.getByLevenshtein",
+        VS_API_KEY,
+        "&lastName="
+    );
+
     private static final String GET_CANDIDATES_BY_ZIP_CODE = String.format(
         URI_ACCESS,
         HOST,
@@ -266,7 +273,7 @@ public final class SimpleDataAccessObject implements DataAccessObject {
     public List<Candidate> getCandidates() throws Exception {
         final String xmlDoc = downloadContent(GET_CANDIDATES);
 
-        return getCandidates(xmlDoc);
+        return getCandidatesFromXml(xmlDoc);
     }
 
     /**
@@ -279,7 +286,7 @@ public final class SimpleDataAccessObject implements DataAccessObject {
     public List<Candidate> getCandidates(ZipCode zipCode) throws Exception {
         final String xmlDoc = downloadContent(GET_CANDIDATES_BY_ZIP_CODE + zipCode.getZip5());
 
-        return getCandidates(xmlDoc);
+        return getCandidatesFromXml(xmlDoc);
     }
 
     public List<Bill> getBills(Candidate p) throws Exception {
@@ -287,6 +294,12 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         final String xmlDoc = FileUtils.readFileToString(new File("/Users/hujol/Projects/followthemoney/sf/resources/bills-votesmart-2008-candid32795.xml"));
 
         return getBills(xmlDoc);
+    }
+
+    public Collection<Candidate> getCandidates(String s) throws Exception {
+        final String xmlDoc = downloadContent(GET_CANDIDATES_BY_LEVENHSTEIN + s);
+
+        return getCandidatesFromXml(xmlDoc);
     }
 
     private List<Bill> getBills(String xmlDoc) throws ParserConfigurationException, IOException, SAXException {
@@ -347,7 +360,7 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         return bills;
     }
 
-    private List<Candidate> getCandidates(String xmlDoc) throws SAXException, IOException, ParserConfigurationException {
+    private List<Candidate> getCandidatesFromXml(String xmlDoc) throws SAXException, IOException, ParserConfigurationException {
         final ByteArrayInputStream bis = new ByteArrayInputStream(xmlDoc.getBytes("UTF-8"));
         //        FileInputStream bis = new FileInputStream(new File("/Users/hujol/Projects/followthemoney/sf/resources", "pvs-api-candidates.xml"));
         final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(bis);
