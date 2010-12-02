@@ -1,8 +1,6 @@
 import org.gicentre.utils.stat.*;        // For chart classes.
 
 // Sketch to demonstrate the use of the BarChart class to draw simple bar charts.
-// Version 1.1, 10th August, 2010.
-// Author Jo Wood, giCentre.
 
 // --------------------- Sketch-wide variables ----------------------
 
