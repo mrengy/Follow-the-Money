@@ -39,85 +39,90 @@ final class Controller implements EventTopicSubscriber {
         EventBus.subscribeStrongly("candidateselected", this);
     }
 
-    public void onEvent(String s, Object o) {
-        if("zipcode".equals(s)) {
-            // Set the zipCode in the model
-            final ZipCode zipCode = new ZipCode((String) o);
-            model.setZipCode(zipCode);
+    public void onEvent(final String s, final Object o) {
+        Runnable runnable = new Runnable() {
+            public void run() {
+                if("zipcode".equals(s)) {
+                    // Set the zipCode in the model
+                    final ZipCode zipCode = new ZipCode((String) o);
+                    model.setZipCode(zipCode);
 
-            final List<Candidate> candidates = new ArrayList<Candidate>();
-            try {
-                candidates.addAll(dao.getCandidates(zipCode));
-            }
-            catch(Exception e) {
-                e.printStackTrace();
-                EventBus.publish("candidatesfound", null);
-                return;
-            }
-            EventBus.publish("candidatesfound", candidates);
-        }
-        else if("candidateNameSearch".equals(s)) {
-            final List<Candidate> candidates = new ArrayList<Candidate>();
-            try {
-                candidates.addAll(dao.getCandidates(o.toString()));
-            }
-            catch(Exception e) {
-                e.printStackTrace();
-                EventBus.publish("candidatesfound", null);
-                return;
-            }
-            EventBus.publish("candidatesfound", candidates);
-        }
-        else if("getissues".equals(s)) {
-            final List<Issue> issues = new ArrayList<Issue>();
-            try {
-                issues.addAll(dao.getIssues());
-            }
-            catch(Exception e) {
-                e.printStackTrace();
-                EventBus.publish("issuesfound", null);
-                return;
-            }
-            EventBus.publish("issuesfound", issues);
-        }
-        else if("candidateSearch".equals(s)) {
-            main.setCandidateSearch();
-        }
-        else if("issueSearch".equals(s)) {
-            main.setIssueSearch();
-        }
-        else if("contributionSearch".equals(s)) {
-            main.setContributionSearch();
-        }
-        else if("visualization".equals(s)) {
-            main.setVisualization();
-        }
-        else if("candidateselected".equals(s)) {
-            if(!(o instanceof Candidate)) {
-                System.err.println("The passed object must be of type " + Candidate.class);
-                EventBus.publish("contributorsfound", null);
-                return;
-            }
-
-            // Set the candidate in the model
-            final Candidate candidate = (Candidate) o;
-            final List<Contributor> contributors = new ArrayList<Contributor>();
-            try {
-                final Collection<Contribution> cc = dao.getContributions(null == candidate ? "" : candidate.getLastName());
-                for(Contribution contribution : cc) {
-                    final Contributor contributor = contribution.getContributorName();
-                    if(!contributors.contains(contributor)) {
-                        contributors.add(contributor);
+                    final List<Candidate> candidates = new ArrayList<Candidate>();
+                    try {
+                        candidates.addAll(dao.getCandidates(zipCode));
                     }
+                    catch(Exception e) {
+                        e.printStackTrace();
+                        EventBus.publish("candidatesfound", null);
+                        return;
+                    }
+                    EventBus.publish("candidatesfound", candidates);
+                }
+                else if("candidateNameSearch".equals(s)) {
+                    final List<Candidate> candidates = new ArrayList<Candidate>();
+                    try {
+                        candidates.addAll(dao.getCandidates(o.toString()));
+                    }
+                    catch(Exception e) {
+                        e.printStackTrace();
+                        EventBus.publish("candidatesfound", null);
+                        return;
+                    }
+                    EventBus.publish("candidatesfound", candidates);
+                }
+                else if("getissues".equals(s)) {
+                    final List<Issue> issues = new ArrayList<Issue>();
+                    try {
+                        issues.addAll(dao.getIssues());
+                    }
+                    catch(Exception e) {
+                        e.printStackTrace();
+                        EventBus.publish("issuesfound", null);
+                        return;
+                    }
+                    EventBus.publish("issuesfound", issues);
+                }
+                else if("candidateSearch".equals(s)) {
+                    main.setCandidateSearch();
+                }
+                else if("issueSearch".equals(s)) {
+                    main.setIssueSearch();
+                }
+                else if("contributionSearch".equals(s)) {
+                    main.setContributionSearch();
+                }
+                else if("visualization".equals(s)) {
+                    main.setVisualization();
+                }
+                else if("candidateselected".equals(s)) {
+                    if(!(o instanceof Candidate)) {
+                        System.err.println("The passed object must be of type " + Candidate.class);
+                        EventBus.publish("contributorsfound", null);
+                        return;
+                    }
+
+                    // Set the candidate in the model
+                    final Candidate candidate = (Candidate) o;
+                    final List<Contributor> contributors = new ArrayList<Contributor>();
+                    try {
+                        final Collection<Contribution> cc = dao.getContributions(null == candidate ? "" : candidate.getLastName());
+                        for(Contribution contribution : cc) {
+                            final Contributor contributor = contribution.getContributorName();
+                            if(!contributors.contains(contributor)) {
+                                contributors.add(contributor);
+                            }
+                        }
+                    }
+                    catch(Exception e) {
+                        e.printStackTrace();
+                        EventBus.publish("contributorsfound", null);
+                        return;
+                    }
+                    EventBus.publish("contributorsfound", contributors);
                 }
             }
-            catch(Exception e) {
-                e.printStackTrace();
-                EventBus.publish("contributorsfound", null);
-                return;
-            }
-            EventBus.publish("contributorsfound", contributors);
-        }
+        };
+        new Thread(runnable).start();
     }
 
     public void close() {
