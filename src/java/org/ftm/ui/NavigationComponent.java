@@ -14,8 +14,14 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author <font size=-1 color="#a3a3a3">Johnny Hujol</font>
@@ -27,9 +33,12 @@ final class NavigationComponent extends JPanel {
     private final JButton issueB = new JButton("Issue");
     private final JButton contributionB = new JButton("Contribution");
     private final JButton visuB = new JButton("Visualize");
-    private static final Dimension DIM = new Dimension(140, 25);
+    private static final Dimension DIM = new Dimension(115, 25);
 
     private final EventTopicSubscriber eventSubscriber;
+
+    private Image bgImage = null;
+    private String message = "";
 
     NavigationComponent() {
         ComponentUtils.setSizes(candidateB, DIM);
@@ -45,18 +54,29 @@ final class NavigationComponent extends JPanel {
         visuB.setAlignmentX(CENTER_ALIGNMENT);
 
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
+        setBorder(BorderFactory.createEmptyBorder(40, 20, 0, 20));
         add(candidateB);
-        add(Box.createVerticalStrut(20));
+        add(Box.createVerticalStrut(33));
         add(issueB);
-        add(Box.createVerticalStrut(20));
+        add(Box.createVerticalStrut(33));
         add(contributionB);
-        add(Box.createVerticalStrut(20));
+        add(Box.createVerticalStrut(80));
         add(visuB);
         add(Box.createVerticalGlue());
 
         if(Debug.isDebug()) {
             setBackground(Color.MAGENTA);
+        }
+
+        try {
+            //            getFileImage(new FileInputStream("/Users/hujol/Projects/followthemoney/sf/resources/images/bkg.png"));
+            // The PNG logo throws a CRC corruption
+            // seems to be a bug: http://bugs.sun.com/view_bug.do?bug_id=4530546
+            getFileImage(getClass().getResourceAsStream("/resources/images/ftmLogo.jpg"));
+            //            getFileImage( getClass().getResourceAsStream("/resources/images/bkg.png"));
+        }
+        catch(Exception ex) {
+            message = "File load failed: " + ex.getMessage();
         }
 
         // Events
@@ -112,6 +132,26 @@ final class NavigationComponent extends JPanel {
         EventBus.subscribeStrongly("candidateselected", eventSubscriber);
         EventBus.subscribeStrongly("issueselected", eventSubscriber);
         EventBus.subscribeStrongly("contributorselected", eventSubscriber);
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        if(bgImage != null) {
+            g.drawImage(bgImage, 18, 20, this);
+        }
+        else {
+            g.drawString(message, 40, 40);
+        }
+    }
+
+    private void getFileImage(final InputStream in) throws InterruptedException, IOException {
+        byte[] b = new byte[in.available()];
+        in.read(b);
+        in.close();
+        bgImage = Toolkit.getDefaultToolkit().createImage(b);
+        MediaTracker mt = new MediaTracker(this);
+        mt.addImage(bgImage, 0);
+        mt.waitForAll();
     }
 
     public void close() {

@@ -4,11 +4,12 @@
    This build script is purely for building BuildSys.
 -->
 
-<project name="buildsys" basedir="." default="clean">
+<project name="buildsys" basedir="." default="clean" xmlns:jw="org.unintelligible.antjnlpwar">
 
     <property name="build.dir" value="build"/>
     <property name="lib.dir" value="lib"/>
-    <property name="ftm.java.api.jar" value="ftmapi.jar"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="ftm.jar" value="ftmapi.jar"/>
     <property name="src.java.dir" location="src/java"/>
     <property environment="env"/>
 
@@ -19,6 +20,8 @@
     </path>
 
     <patternset id="core.sources">
+        <include name="org/ftm/ui/**/*.java"/>
+        <include name="org/ftm/util/**/*.java"/>
         <include name="org/ftm/api/**/*.java"/>
         <include name="org/ftm/impl/**/*.java"/>
         <include name="org/ftm/impl/**/DataAccessObjectTextFile.java"/>
@@ -26,11 +29,13 @@
 
     <target name="clean">
         <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
     </target>
 
-    <target name="ftm.api.build" depends="clean">
+    <target name="jar" depends="clean">
         <mkdir dir="${build.dir}"/>
-        <copydir src="resources" dest="${build.dir}/resources"/>
+        <copydir src="resources/images" dest="${build.dir}/resources/images"/>
+        <copy file="resources/catcodes-20100402.csv" todir="${build.dir}/resources/"/>
         <javac srcdir="${src.java.dir}"
                destdir="${build.dir}"
                source="1.5"
@@ -38,11 +43,10 @@
             <patternset refid="core.sources"/>
             <classpath refid="class.path"/>
         </javac>
-        <jar jarfile="${ftm.java.api.jar}"
+        <jar jarfile="${dist.dir}/${ftm.jar}"
              compress="true"
              index="true"
              basedir="${build.dir}">
-            <include name="**/*"/>
         </jar>
     </target>
 
@@ -52,23 +56,78 @@
     <property name="processing.libraries.dir.windows"
               value="C:\Documents and Settings\${env.USERNAME}\My Documents\Processing\libraries\ftmapi\library"/>
 
-    <target name="install.ftm.api.jar.osx" depends="ftm.api.build">
+    <target name="install.ftm.api.jar.osx" depends="jar">
         <antcall target="-install.ftm.api.jar">
             <param name="processing.libraries.dir" value="${processing.libraries.dir.osx}"/>
         </antcall>
     </target>
 
-    <target name="install.ftm.api.jar.windows" depends="ftm.api.build">
+    <target name="install.ftm.api.jar.windows" depends="jar">
         <antcall target="-install.ftm.api.jar">
             <param name="processing.libraries.dir" value="${processing.libraries.dir.windows}"/>
         </antcall>
     </target>
 
-    <target name="-install.ftm.api.jar" depends="ftm.api.build">
+    <target name="run" depends="jar">
+        <java classname="org.ftm.ui.Main"
+              fork="true"
+              failonerror="true"
+              maxmemory="128m"
+                >
+            <classpath refid="class.path"/>
+            <classpath>
+                <pathelement location="${dist.dir}/${ftm.jar}"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="-install.ftm.api.jar" depends="jar">
         <mkdir dir="${processing.libraries.dir}"/>
-        <copy file="${ftm.java.api.jar}" todir="${processing.libraries.dir}"/>
+        <copy file="${dist.dir}/${ftm.jar}" todir="${processing.libraries.dir}"/>
         <copy file="${lib.dir}/commons-io_1.3.2.jar" todir="${processing.libraries.dir}"/>
         <copy file="${lib.dir}/commons-lang_2.3.jar" todir="${processing.libraries.dir}"/>
-        <copy file="${lib.dir}/gson-1.5.jar" todir="${processing.libraries.dir}"/>
+        <copy file="lib/gson_1.5.jar" todir="${processing.libraries.dir}"/>
+    </target>
+
+    <typedef resource="org/unintelligible/antjnlpwar/antjnlpwar.xml" format="xml" uri="org.unintelligible.antjnlpwar"/>
+
+    <target name="dist" depends="jar">
+        <!-- Create a distributable WAR archive of the application using the following attributes:
+        * tofile: the destination WAR file
+        * codebase: where the application will be deployed to
+        * title: the application name
+        * vendor: your company name
+        * pack200: create pack200 archives for quicker client downloads
+        * signStorePass: the password to your Java certificate store (used to sign the jars)
+        * signAlias: the name of the certificate to use (used to sign the jars)
+        -->
+        <jw:jnlpwar
+                tofile="dist/myApplicationName.war"
+                codebase="http://www.whatever.com/myApplicationName"
+                title="Application Name"
+                vendor="Vendor Name Goes Here"
+                pack200="true"
+                signStorepass="myJavaCertificationStorePassword"
+                signAlias="myJavaCertificationAlias">
+            <!-- Add a normal and a short description -->
+            <jw:description>This is the descriptive text for the product</jw:description>
+            <jw:description kind="short">This is a short descriptive text for the product</jw:description>
+            <!-- Add an icon for the application -->
+            <jw:icon file="resources/images/ftmLogo.png"/>
+            <!-- Show a splash screen when the application launches -->
+            <jw:icon kind="splash" file="resources/images/ftmLogo.png"/>
+            <!-- Specify the minimal version of Java required by the app, along with
+            some command-line arguments -->
+            <jw:j2se minVersion="1.5" args="-Xmx250M">
+                <!--<jw:j2seProperty name="MyApplicationProperty" value="myApplicationPropertyValue"/>-->
+            </jw:j2se>
+            <!-- Add the libraries used by the application -->
+            <lib dir="lib">
+                <include name="**/*.jar"/>
+            </lib>
+            <!-- Specify the main class for the application,
+            and the jar it is located in (can be duplicate from the lib element) -->
+            <jw:application mainclass="org.ftm.ui.Main" jar="${dist.dir}/${ftm.jar}"/>
+        </jw:jnlpwar>
     </target>
 </project>

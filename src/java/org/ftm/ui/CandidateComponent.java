@@ -22,7 +22,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.ftm.ui.ComponentUtils.createPanelWithFixedSize;
@@ -172,7 +173,14 @@ final class CandidateComponent extends JPanel implements EventTopicSubscriber {
 
     public void onEvent(String s, Object o) {
         if(o instanceof List) {
-            Collection<Candidate> candidates = (List<Candidate>) o;
+            final List<Candidate> candidates = (List<Candidate>) o;
+            Collections.sort(candidates, new Comparator<Candidate>() {
+                public int compare(Candidate p, Candidate o1) {
+                    final String name = p.getFirstName() + ' ' + p.getLastName();
+                    final String name1 = o1.getFirstName() + ' ' + o1.getLastName();
+                    return name.compareTo(name1);
+                }
+            });
             candidatesFound.setListData(candidates.toArray(new Candidate[candidates.size()]));
         }
     }

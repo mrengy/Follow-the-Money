@@ -8,7 +8,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ftm.api.Bill;
 import org.ftm.api.Candidate;
@@ -27,11 +26,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -66,11 +65,11 @@ public final class SimpleDataAccessObject implements DataAccessObject {
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     public Collection<Contribution> getContributions(final String candidateName) throws Exception {
-        //        final Reader reader = new StringReader(downloadContent(
-        //                "http://transparencydata.com/api/1.0/contributions.json?apikey=160f59b8c6ea40cca6ed1c709179d647&contributor_state=md|va" +
-        //                        "&recipient_ft=" + candidateName.toLowerCase() + "&amount=>|1000&per_page=100000&cycle=2008"));
+        final Reader reader = new StringReader(downloadContent(
+            "http://transparencydata.com/api/1.0/contributions.json?apikey=160f59b8c6ea40cca6ed1c709179d647&contributor_state=md|va" +
+                "&recipient_ft=" + candidateName.toLowerCase() + "&amount=>|1000&per_page=100000&cycle=2008"));
 
-        final Reader reader = new InputStreamReader(SimpleDataAccessObject.class.getResourceAsStream("/resources/contributions.json"));
+        //        final Reader reader = new InputStreamReader(SimpleDataAccessObject.class.getResourceAsStream("/resources/contributions.json"));
 
         Filter<Contribution> filter;
         if(null == candidateName || 0 == candidateName.trim().length()) {
@@ -100,7 +99,7 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         final Collection<Contribution> tmp = gson.fromJson(reader, collectionType);
         final Collection<Contribution> contributions = new ArrayList<Contribution>(8);
         for(Contribution contribution : tmp) {
-            if(null != contribution && filter.accept(contribution)) {
+            if(null != contribution && filter.accept(contribution) && !contributions.contains(contribution)) {
                 contributions.add(contribution);
             }
         }
@@ -198,13 +197,13 @@ public final class SimpleDataAccessObject implements DataAccessObject {
     }
 
     public List<Issue> getIssues() throws Exception {
-        //        final String xmlDoc = downloadContent(String.format(
-        //                GET_CATEGORIES,
-        //                2010
-        //        ));
+        final String xmlDoc = downloadContent(String.format(
+            GET_CATEGORIES,
+            2010
+        ));
 
-        final String xmlDoc = FileUtils.readFileToString(new File("/Users/hujol/Projects/followthemoney/sf/resources/categories.xml"));
-
+        //        final String xmlDoc = FileUtils.readFileToString(new File("/Users/hujol/Projects/followthemoney/sf/resources/categories.xml"));
+        //
         final InputStream bis = new ByteArrayInputStream(xmlDoc.getBytes("UTF-8"));
         final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(bis);
         final NodeList nodes = doc.getChildNodes();
@@ -290,8 +289,8 @@ public final class SimpleDataAccessObject implements DataAccessObject {
     }
 
     public List<Bill> getBills(Candidate p) throws Exception {
-        //        final String xmlDoc = downloadContent(GET_BILLS_BY_CANDIDATE_ID + p.getId());
-        final String xmlDoc = FileUtils.readFileToString(new File("/Users/hujol/Projects/followthemoney/sf/resources/bills-votesmart-2008-candid32795.xml"));
+        final String xmlDoc = downloadContent(GET_BILLS_BY_CANDIDATE_ID + p.getId());
+        //        final String xmlDoc = FileUtils.readFileToString(new File("/Users/hujol/Projects/followthemoney/sf/resources/bills-votesmart-2008-candid32795.xml"));
 
         return getBills(xmlDoc);
     }
