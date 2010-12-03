@@ -17,6 +17,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -44,8 +46,15 @@ final class ContributionComponent extends JPanel implements EventTopicSubscriber
             public Component getListCellRendererComponent(JList jList, Object o, int i, boolean b, boolean b1) {
                 final JLabel label = (JLabel) super.getListCellRendererComponent(jList, o, i, b, b1);
                 final Contributor contributor = (Contributor) o;
-                label.setText(contributor.getIndustryCategory());
-                label.setToolTipText(contributor.getIndustryCategory());
+                final String text;
+                if(null == contributor) {
+                    text = "No Industry Found";
+                }
+                else {
+                    text = contributor.getIndustryCategory();
+                }
+                label.setText(text);
+                label.setToolTipText(text);
                 return label;
             }
         });
@@ -63,6 +72,11 @@ final class ContributionComponent extends JPanel implements EventTopicSubscriber
         if("contributorsfound".equalsIgnoreCase(s)) {
             if(null != o && o instanceof List) {
                 final List<Contributor> contributors = (List<Contributor>) o;
+                Collections.sort(contributors, new Comparator<Contributor>() {
+                    public int compare(Contributor contributor, Contributor contributor1) {
+                        return contributor.getIndustryCategory().compareTo(contributor1.getIndustryCategory());
+                    }
+                });
                 contributorsCombo.setModel(new DefaultComboBoxModel(contributors.toArray(new Contributor[contributors.size()])));
             }
         }

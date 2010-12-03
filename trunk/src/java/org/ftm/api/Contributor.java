@@ -17,6 +17,23 @@ public final class Contributor {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+
+        final Contributor that = (Contributor) o;
+
+        if(!industryCategory.equals(that.industryCategory)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return industryCategory.hashCode();
+    }
+
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("Contributor");

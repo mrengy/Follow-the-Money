@@ -1,127 +1,127 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <categories>
- <generalInfo>
-  <title>Project Vote Smart - Keyvote Categories</title>
-  <linkBack>http://votesmart.org/issue_keyvote.php</linkBack>
- </generalInfo>
- <category>
-  <categoryId>10</categoryId>
-  <name>Budget, Spending and Taxes</name>
- </category>
- <category>
-  <categoryId>11</categoryId>
-  <name>Business and Consumers</name>
- </category>
- <category>
-  <categoryId>12</categoryId>
-  <name>Campaign Finance and Election Issues</name>
- </category>
- <category>
-  <categoryId>13</categoryId>
-  <name>Civil Liberties and Civil Rights</name>
- </category>
- <category>
-  <categoryId>16</categoryId>
-  <name>Congressional and Legislative Affairs</name>
- </category>
- <category>
-  <categoryId>20</categoryId>
-  <name>Crime Issues</name>
- </category>
- <category>
-  <categoryId>27</categoryId>
-  <name>Education</name>
- </category>
- <category>
-  <categoryId>29</categoryId>
-  <name>Energy Issues</name>
- </category>
- <category>
-  <categoryId>30</categoryId>
-  <name>Environmental Issues</name>
- </category>
- <category>
-  <categoryId>69</categoryId>
-  <name>Executive Branch</name>
- </category>
- <category>
-  <categoryId>31</categoryId>
-  <name>Family and Children Issues</name>
- </category>
- <category>
-  <categoryId>72</categoryId>
-  <name>Federal, State, and Local Relations</name>
- </category>
- <category>
-  <categoryId>32</categoryId>
-  <name>Foreign Aid and Policy Issues</name>
- </category>
- <category>
-  <categoryId>37</categoryId>
-  <name>Gun Issues</name>
- </category>
- <category>
-  <categoryId>38</categoryId>
-  <name>Health Issues</name>
- </category>
- <category>
-  <categoryId>39</categoryId>
-  <name>Housing and Property Issues</name>
- </category>
- <category>
-  <categoryId>40</categoryId>
-  <name>Immigration</name>
- </category>
- <category>
-  <categoryId>74</categoryId>
-  <name>Indigenous Peoples</name>
- </category>
- <category>
-  <categoryId>43</categoryId>
-  <name>Labor</name>
- </category>
- <category>
-  <categoryId>44</categoryId>
-  <name>Legal Issues</name>
- </category>
- <category>
-  <categoryId>47</categoryId>
-  <name>Military Issues</name>
- </category>
- <category>
-  <categoryId>61</categoryId>
-  <name>National Security Issues</name>
- </category>
- <category>
-  <categoryId>75</categoryId>
-  <name>Reproductive Issues</name>
- </category>
- <category>
-  <categoryId>52</categoryId>
-  <name>Science and Medical Research</name>
- </category>
- <category>
-  <categoryId>53</categoryId>
-  <name>Senior and Social Security Issues</name>
- </category>
- <category>
-  <categoryId>76</categoryId>
-  <name>Sexual Orientation and Gender Identity</name>
- </category>
- <category>
-  <categoryId>41</categoryId>
-  <name>Technology and Communication</name>
- </category>
- <category>
-  <categoryId>63</categoryId>
-  <name>Trade Issues</name>
- </category>
- <category>
-  <categoryId>66</categoryId>
-  <name>Veterans Issues</name>
- </category>
- <category>
-  <categoryId>67</categoryId>
-  <name>Welfare and Poverty</name>
- </category>
+    <generalInfo>
+        <title>Project Vote Smart - Keyvote Categories</title>
+        <linkBack>http://votesmart.org/issue_keyvote.php</linkBack>
+    </generalInfo>
+    <category>
+        <categoryId>10</categoryId>
+        <name>Budget, Spending and Taxes</name>
+    </category>
+    <category>
+        <categoryId>11</categoryId>
+        <name>Business and Consumers</name>
+    </category>
+    <category>
+        <categoryId>12</categoryId>
+        <name>Campaign Finance and Election Issues</name>
+    </category>
+    <category>
+        <categoryId>13</categoryId>
+        <name>Civil Liberties and Civil Rights</name>
+    </category>
+    <category>
+        <categoryId>16</categoryId>
+        <name>Congressional and Legislative Affairs</name>
+    </category>
+    <category>
+        <categoryId>20</categoryId>
+        <name>Crime Issues</name>
+    </category>
+    <category>
+        <categoryId>27</categoryId>
+        <name>Education</name>
+    </category>
+    <category>
+        <categoryId>29</categoryId>
+        <name>Energy Issues</name>
+    </category>
+    <category>
+        <categoryId>30</categoryId>
+        <name>Environmental Issues</name>
+    </category>
+    <category>
+        <categoryId>69</categoryId>
+        <name>Executive Branch</name>
+    </category>
+    <category>
+        <categoryId>31</categoryId>
+        <name>Family and Children Issues</name>
+    </category>
+    <category>
+        <categoryId>72</categoryId>
+        <name>Federal, State, and Local Relations</name>
+    </category>
+    <category>
+        <categoryId>32</categoryId>
+        <name>Foreign Aid and Policy Issues</name>
+    </category>
+    <category>
+        <categoryId>37</categoryId>
+        <name>Gun Issues</name>
+    </category>
+    <category>
+        <categoryId>38</categoryId>
+        <name>Health Issues</name>
+    </category>
+    <category>
+        <categoryId>39</categoryId>
+        <name>Housing and Property Issues</name>
+    </category>
+    <category>
+        <categoryId>40</categoryId>
+        <name>Immigration</name>
+    </category>
+    <category>
+        <categoryId>74</categoryId>
+        <name>Indigenous Peoples</name>
+    </category>
+    <category>
+        <categoryId>43</categoryId>
+        <name>Labor</name>
+    </category>
+    <category>
+        <categoryId>44</categoryId>
+        <name>Legal Issues</name>
+    </category>
+    <category>
+        <categoryId>47</categoryId>
+        <name>Military Issues</name>
+    </category>
+    <category>
+        <categoryId>61</categoryId>
+        <name>National Security Issues</name>
+    </category>
+    <category>
+        <categoryId>75</categoryId>
+        <name>Reproductive Issues</name>
+    </category>
+    <category>
+        <categoryId>52</categoryId>
+        <name>Science and Medical Research</name>
+    </category>
+    <category>
+        <categoryId>53</categoryId>
+        <name>Senior and Social Security Issues</name>
+    </category>
+    <category>
+        <categoryId>76</categoryId>
+        <name>Sexual Orientation and Gender Identity</name>
+    </category>
+    <category>
+        <categoryId>41</categoryId>
+        <name>Technology and Communication</name>
+    </category>
+    <category>
+        <categoryId>63</categoryId>
+        <name>Trade Issues</name>
+    </category>
+    <category>
+        <categoryId>66</categoryId>
+        <name>Veterans Issues</name>
+    </category>
+    <category>
+        <categoryId>67</categoryId>
+        <name>Welfare and Poverty</name>
+    </category>
 </categories>

@@ -93,12 +93,22 @@ final class Controller implements EventTopicSubscriber {
             main.setVisualization();
         }
         else if("candidateselected".equals(s)) {
+            if(!(o instanceof Candidate)) {
+                System.err.println("The passed object must be of type " + Candidate.class);
+                EventBus.publish("contributorsfound", null);
+                return;
+            }
+
+            // Set the candidate in the model
+            final Candidate candidate = (Candidate) o;
             final List<Contributor> contributors = new ArrayList<Contributor>();
             try {
-                final Candidate candidate = model.getCandidateSelected();
                 final Collection<Contribution> cc = dao.getContributions(null == candidate ? "" : candidate.getLastName());
                 for(Contribution contribution : cc) {
-                    contributors.add(contribution.getContributorName());
+                    final Contributor contributor = contribution.getContributorName();
+                    if(!contributors.contains(contributor)) {
+                        contributors.add(contributor);
+                    }
                 }
             }
             catch(Exception e) {
