@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+"
+      codebase="http://jhujol.free.fr/ftm/"
+      href="ftm.jnlp">
+    <information>
+        <title>FTM Visu</title>
+        <vendor>Follow The Money - http://www.pauric.net/followthemoney/</vendor>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+    <resources>
+        <j2se version="1.6+"
+              href="http://java.sun.com/products/autodl/j2se"
+                />
+        <jar href="ftmapi.jar" main="true"/>
+        <jar href="commons-io_1.3.2.jar"/>
+        <jar href="commons-lang_2.3.jar"/>
+        <jar href="core_1.2.1.jar"/>
+        <jar href="eventbus_1.4.jar"/>
+        <jar href="gson_1.5.jar"/>
+        <jar href="pde_1.2.1.jar"/>
+        <jar href="VoteSmart.jar"/>
+
+    </resources>
+    <application-desc
+            name="Follow The Money"
+            main-class="org.ftm.ui.Main">
+    </application-desc>
+    <update check="background"/>
+</jnlp>
