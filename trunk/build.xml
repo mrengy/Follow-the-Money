@@ -4,7 +4,7 @@
    This build script is purely for building BuildSys.
 -->
 
-<project name="buildsys" basedir="." default="clean" xmlns:jw="org.unintelligible.antjnlpwar">
+<project name="buildsys" basedir="." default="clean">
 
     <property name="build.dir" value="build"/>
     <property name="lib.dir" value="lib"/>
@@ -56,13 +56,13 @@
     <property name="processing.libraries.dir.windows"
               value="C:\Documents and Settings\${env.USERNAME}\My Documents\Processing\libraries\ftmapi\library"/>
 
-    <target name="install.ftm.api.jar.osx" depends="jar">
+    <target name="-install.ftm.api.jar.osx" depends="jar">
         <antcall target="-install.ftm.api.jar">
             <param name="processing.libraries.dir" value="${processing.libraries.dir.osx}"/>
         </antcall>
     </target>
 
-    <target name="install.ftm.api.jar.windows" depends="jar">
+    <target name="-install.ftm.api.jar.windows" depends="jar">
         <antcall target="-install.ftm.api.jar">
             <param name="processing.libraries.dir" value="${processing.libraries.dir.windows}"/>
         </antcall>
