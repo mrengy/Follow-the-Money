@@ -128,6 +128,7 @@ void draw()
 class Bill{
   String billCode;
   String billName;
+  String shortBillName; //shortened bill name
   String result; //yes, no, or non-resolved
   float startDate; //determines x position of start. CURRENTLY INPUT AS AN X-POSITION - NEEDS TO CONVERT A DATE TO X-POSITION
   float endDate; //determines x position of end. CURRENTLY INPUT AS AN X-POSITION - NEEDS TO CONVERT A DATE TO X-POSITION
@@ -137,6 +138,7 @@ class Bill{
   Bill(String tempBillCode, String tempBillName, String tempResult, float tempStartDate, float tempEndDate, float tempLineNum){
    billCode = tempBillCode;
    billName = tempBillName;
+   shortBillName = billName.substring(0,26);
    result = tempResult;
    startDate = tempStartDate;
    endDate = tempEndDate;
@@ -162,7 +164,12 @@ class Bill{
      fill(120);
      
      //writes text
-     text(billCode + ", " + billName, votesX, yPos);
+     if (billName.length() > 26){ //takes shortened version if longer than 27 characters
+       text(billCode + ", " + shortBillName + "...", votesX, yPos);
+     }
+     else{
+       text(billCode + ", " + billName, votesX, yPos);
+     }
      
      //rests text to left
      textAlign(LEFT);
