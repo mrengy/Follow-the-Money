@@ -18,16 +18,11 @@ import org.ftm.api.Issue;
 import org.ftm.api.ZipCode;
 import org.ftm.util.Filter;
 import org.ftm.xml.XPathReader;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -206,31 +201,15 @@ public final class SimpleDataAccessObject implements DataAccessObject {
 
         //        final String xmlDoc = FileUtils.readFileToString(new File("/Users/hujol/Projects/followthemoney/sf/resources/categories.xml"));
         //
-        final InputStream bis = new ByteArrayInputStream(xmlDoc.getBytes("UTF-8"));
-        final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(bis);
-        final NodeList nodes = doc.getChildNodes();
+
+        final XPathReader reader = new XPathReader(xmlDoc);
+        final NodeList categoryNodes = reader.evaluate("/categories/category", XPathConstants.NODESET);
         final List<Issue> issues = new ArrayList<Issue>(8);
-        for(int i = 0; i < nodes.getLength(); i++) {
-            final Node node = nodes.item(i);
-            final NodeList attributes = node.getChildNodes();
-            final int l = attributes.getLength();
-            for(int j = 0; j < l; j++) {
-                final Node att = attributes.item(j);
-                if("category".equals(att.getNodeName())) {
-                    final NodeList genInfos = att.getChildNodes();
-                    final int i1 = genInfos.getLength();
-                    for(int k = 0; k < i1; k++) {
-                        final Node node1 = genInfos.item(k);
-                        if("name".equals(node1.getNodeName())) {
-                            final String issueName = node1.getTextContent();
-                            issues.add(new Issue(issueName));
-                        }
-                    }
-                }
-            }
+        for(int i = 0; i < categoryNodes.getLength(); i++) {
+            Node catNode = categoryNodes.item(i);
+            issues.add(new Issue(reader.evaluate("name", catNode)));
         }
         return issues;
-        //        return Collections.emptyList();
     }
 
     private static final String GET_CANDIDATES = String.format(
@@ -288,41 +267,17 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         return getCandidatesFromXml(xmlDoc);
     }
 
-    private List<Candidate> getCandidatesFromXml(String xmlDoc) throws SAXException, IOException, ParserConfigurationException {
-        final ByteArrayInputStream bis = new ByteArrayInputStream(xmlDoc.getBytes("UTF-8"));
-        //        FileInputStream bis = new FileInputStream(new File("/Users/hujol/Projects/followthemoney/sf/resources", "pvs-api-candidates.xml"));
-        final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(bis);
-        final NodeList nodes = doc.getChildNodes();
+    private List<Candidate> getCandidatesFromXml(String xmlDoc) throws Exception {
+        final XPathReader reader = new XPathReader(xmlDoc);
+        final NodeList candidateNodes = reader.evaluate("/candidateList/candidate", XPathConstants.NODESET);
         final List<Candidate> candidates = new ArrayList<Candidate>(8);
-        for(int i = 0; i < nodes.getLength(); i++) {
-            final Node node = nodes.item(i);
-            final NodeList attributes = node.getChildNodes();
-            final int l = attributes.getLength();
-            for(int j = 0; j < l; j++) {
-                final Node att = attributes.item(j);
-                String nodeName = att.getNodeName().toLowerCase();
-                if("candidate".equals(nodeName)) {
-                    NodeList candidatesAttributes = att.getChildNodes();
-                    String firstName = null;
-                    String lastName = null;
-                    int candidateId = -1;
-                    for(int k = 0; k < candidatesAttributes.getLength(); k++) {
-                        Node node1 = candidatesAttributes.item(k);
-                        String name = node1.getNodeName();
-                        String content = node1.getTextContent();
-                        if("firstName".equalsIgnoreCase(name)) {
-                            firstName = content;
-                        }
-                        else if("lastName".equalsIgnoreCase(name)) {
-                            lastName = content;
-                        }
-                        else if("candidateId".equalsIgnoreCase(name)) {
-                            candidateId = Integer.valueOf(content);
-                        }
-                    }
-                    candidates.add(new Candidate(candidateId, lastName, firstName));
-                }
-            }
+        for(int i = 0; i < candidateNodes.getLength(); i++) {
+            final Node candidateNode = candidateNodes.item(i);
+            candidates.add(new Candidate(
+                ((Double) reader.evaluate("candidateId", candidateNode, XPathConstants.NUMBER)).intValue(),
+                reader.evaluate("lastName", candidateNode),
+                reader.evaluate("firstName", candidateNode)
+            ));
         }
         return candidates;
     }
