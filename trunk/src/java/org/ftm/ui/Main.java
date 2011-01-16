@@ -33,7 +33,7 @@ public final class Main {
 
     //Specify the look and feel to use.  Valid values:
     //null (use the default), "Metal", "System", "Motif", "GTK+"
-    final static String LOOKANDFEEL = "Metal";
+    private final static String LOOKANDFEEL = "Metal";
 
     private final JPanel placeHolder = new JPanel();
     private final Component candidateCp = new CandidateComponent();
@@ -41,13 +41,16 @@ public final class Main {
     private final Component contributionCp = new ContributionComponent();
     private final Applet visu = new VisualizationComponent2();
     private final JSplitPane mainPane;
-    private NavigationComponent navigation;
+    private final NavigationComponent navigation;
+
+    private final Model model;
+    private final DataAccessObject dao;
     private final Controller controller;
 
     public Main() {
-        final DataAccessObject dao = new SimpleDataAccessObject();
-
-        controller = new Controller(this, dao, new Model());
+        model = new Model();
+        dao = new SimpleDataAccessObject();
+        controller = new Controller(this, this.dao, model);
 
         final NavigationComponent mp = new NavigationComponent();
 
@@ -91,7 +94,7 @@ public final class Main {
         f.setContentPane(m.mainPane);
 
         f.setResizable(true);
-        final Dimension dim = new Dimension(900, 640);
+        final Dimension dim = new Dimension(820, 640);
         f.setMinimumSize(dim);
         f.setSize(dim);
         final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -183,6 +186,9 @@ public final class Main {
     }
 
     public void setVisualization() {
+        // Set information in model so visu can draw using the model.
+
+
         // important to call this whenever embedding a PApplet.
         // It ensures that the animation thread is started and
         // that other internal variables are properly set.

@@ -18,6 +18,7 @@ final class VisualizationComponent2 extends PApplet implements EventTopicSubscri
     // --------------------- Sketch-wide variables ----------------------
 
     BarChart barChart;
+
     Bill bill1;
     Bill bill2;
     Bill bill3;
@@ -55,7 +56,7 @@ final class VisualizationComponent2 extends PApplet implements EventTopicSubscri
     // Initialises the data and bar chart.
     @Override
     public void setup() {
-        size(1000, 700);
+        size(800, 500);
         smooth();
 
         PFont font = createFont("Helvetica", 11);
@@ -153,7 +154,7 @@ final class VisualizationComponent2 extends PApplet implements EventTopicSubscri
             billCode = tempBillCode;
             billName = tempBillName;
             int l = billName.length();
-            shortBillName = l > 30 ? billName.substring(0, 27) + "..." : billName;
+            shortBillName = 30 < l ? billName.substring(0, 27) + "..." : billName;
             result = tempResult;
             startDate = tempStartDate;
             endDate = tempEndDate;
