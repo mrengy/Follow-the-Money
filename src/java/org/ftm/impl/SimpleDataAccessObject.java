@@ -17,6 +17,7 @@ import org.ftm.api.DataAccessObject;
 import org.ftm.api.Issue;
 import org.ftm.api.ZipCode;
 import org.ftm.util.Filter;
+import org.ftm.xml.XPathReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -24,6 +25,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathConstants;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -44,7 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This implementation is multiple data source APIs.
+ * This implementation is using multiple data source APIs.
  *
  * @author <font size=-1 color="#a3a3a3">johnny.hujol@gmail.com (Johnny Hujol)</font>
  * @since Apr 26, 2010
@@ -55,13 +57,6 @@ public final class SimpleDataAccessObject implements DataAccessObject {
     private static final String HOST = "api.votesmart.org";
     private static final String URI_ACCESS = "http://%s/%s?key=%s%s";
 
-    private static final String GET_CATEGORIES = String.format(
-        URI_ACCESS,
-        HOST,
-        "Votes.getCategories",
-        VS_API_KEY,
-        "&year=%s"
-    );
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     public Collection<Contribution> getContributions(final String candidateName) throws Exception {
@@ -72,7 +67,7 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         //        final Reader reader = new InputStreamReader(SimpleDataAccessObject.class.getResourceAsStream("/resources/contributions.json"));
 
         Filter<Contribution> filter;
-        if(null == candidateName || 0 == candidateName.trim().length()) {
+        if(0 == candidateName.trim().length()) {
             filter = new Filter<Contribution>() {
                 public boolean accept(Contribution c) {
                     return true;
@@ -195,6 +190,14 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         }
     }
 
+    private static final String GET_CATEGORIES = String.format(
+        URI_ACCESS,
+        HOST,
+        "Votes.getCategories",
+        VS_API_KEY,
+        "&year=%s"
+    );
+
     public List<Issue> getIssues() throws Exception {
         final String xmlDoc = downloadContent(String.format(
             GET_CATEGORIES,
@@ -238,30 +241,6 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         ""
     );
 
-    private static final String GET_CANDIDATES_BY_LEVENHSTEIN = String.format(
-        URI_ACCESS,
-        HOST,
-        "Officials.getByLevenshtein",
-        VS_API_KEY,
-        "&lastName="
-    );
-
-    private static final String GET_CANDIDATES_BY_ZIP_CODE = String.format(
-        URI_ACCESS,
-        HOST,
-        "Officials.getByZip",
-        VS_API_KEY,
-        "&zip5="
-    );
-
-    private static final String GET_BILLS_BY_CANDIDATE_ID = String.format(
-        URI_ACCESS,
-        HOST,
-        "Votes.getByOfficial",
-        VS_API_KEY,
-        "&year=2008&&candidateId="
-    );
-
     /**
      * Uses the VoteSmart API to get the candidates.
      *
@@ -273,6 +252,14 @@ public final class SimpleDataAccessObject implements DataAccessObject {
 
         return getCandidatesFromXml(xmlDoc);
     }
+
+    private static final String GET_CANDIDATES_BY_ZIP_CODE = String.format(
+        URI_ACCESS,
+        HOST,
+        "Officials.getByZip",
+        VS_API_KEY,
+        "&zip5="
+    );
 
     /**
      * Uses the VoteSmart API to get the candidates.
@@ -287,75 +274,18 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         return getCandidatesFromXml(xmlDoc);
     }
 
-    public List<Bill> getBills(Candidate p) throws Exception {
-        final String xmlDoc = downloadContent(GET_BILLS_BY_CANDIDATE_ID + p.getId());
-        //        final String xmlDoc = FileUtils.readFileToString(new File("/Users/hujol/Projects/followthemoney/sf/resources/bills-votesmart-2008-candid32795.xml"));
-
-        return getBills(xmlDoc);
-    }
+    private static final String GET_CANDIDATES_BY_LEVENHSTEIN = String.format(
+        URI_ACCESS,
+        HOST,
+        "Officials.getByLevenshtein",
+        VS_API_KEY,
+        "&lastName="
+    );
 
     public Collection<Candidate> getCandidates(String s) throws Exception {
         final String xmlDoc = downloadContent(GET_CANDIDATES_BY_LEVENHSTEIN + s);
 
         return getCandidatesFromXml(xmlDoc);
-    }
-
-    private List<Bill> getBills(String xmlDoc) throws ParserConfigurationException, IOException, SAXException {
-        final ByteArrayInputStream bis = new ByteArrayInputStream(xmlDoc.getBytes("UTF-8"));
-        //        FileInputStream bis = new FileInputStream(new File("/Users/hujol/Projects/followthemoney/sf/resources", "pvs-api-candidates.xml"));
-        final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(bis);
-        final NodeList nodes = doc.getChildNodes();
-        final List<Bill> bills = new ArrayList<Bill>(8);
-        for(int i = 0; i < nodes.getLength(); i++) {
-            final Node node = nodes.item(i);
-            final NodeList attributes = node.getChildNodes();
-            final int l = attributes.getLength();
-            for(int j = 0; j < l; j++) {
-                final Node att = attributes.item(j);
-                String nodeName = att.getNodeName().toLowerCase();
-                if("bill".equals(nodeName)) {
-                    NodeList candidatesAttributes = att.getChildNodes();
-                    String title = null;
-                    String stage = null;
-                    Bill.Vote vote = Bill.Vote.YES;
-                    String issue = null;
-                    for(int k = 0; k < candidatesAttributes.getLength(); k++) {
-                        Node node1 = candidatesAttributes.item(k);
-                        String name = node1.getNodeName();
-                        String content = node1.getTextContent();
-                        if("title".equalsIgnoreCase(name)) {
-                            title = content;
-                        }
-                        else if("stage".equalsIgnoreCase(name)) {
-                            stage = content;
-                        }
-                        else if("vote".equalsIgnoreCase(name)) {
-                            vote = "y".equalsIgnoreCase(content) ? Bill.Vote.YES : Bill.Vote.NO;
-                        }
-                        else if("categories".equalsIgnoreCase(name)) {
-                            NodeList Aaaa = node1.getChildNodes();
-                            for(int kk = 0; kk < Aaaa.getLength(); kk++) {
-                                Node node11 = Aaaa.item(kk);
-                                String name1 = node11.getNodeName();
-                                if("category".equalsIgnoreCase(name1)) {
-                                    NodeList Aaaaa = node11.getChildNodes();
-                                    for(int kkk = 0; kkk < Aaaaa.getLength(); kkk++) {
-                                        Node node11k = Aaaaa.item(kkk);
-                                        if("name".equals(node11k.getNodeName())) {
-                                            issue = node11k.getTextContent();
-                                            break;
-                                        }
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    bills.add(new Bill(title, stage, vote, issue));
-                }
-            }
-        }
-        return bills;
     }
 
     private List<Candidate> getCandidatesFromXml(String xmlDoc) throws SAXException, IOException, ParserConfigurationException {
@@ -395,6 +325,69 @@ public final class SimpleDataAccessObject implements DataAccessObject {
             }
         }
         return candidates;
+    }
+
+    private static final String GET_BILLS_BY_CANDIDATE_ID = String.format(
+        URI_ACCESS,
+        HOST,
+        "Votes.getByOfficial",
+        VS_API_KEY,
+        "&year=2008&&candidateId="
+    );
+
+    public List<Bill> getBills(Candidate p) throws Exception {
+        final String xmlDoc = downloadContent(GET_BILLS_BY_CANDIDATE_ID + p.getId());
+        //        final String xmlDoc = FileUtils.readFileToString(new File("/Users/hujol/Projects/followthemoney/sf/resources/bills-votesmart-2008-candid32795.xml"));
+
+        return getBills(xmlDoc);
+    }
+
+    private static List<Bill> getBills(String xmlDoc) throws Exception {
+        final XPathReader reader = new XPathReader(xmlDoc);
+        final NodeList billNodes = reader.evaluate("/bills/bill", XPathConstants.NODESET);
+
+        final List<Bill> bills = new ArrayList<Bill>(billNodes.getLength());
+        for(int i = 0; i < billNodes.getLength(); i++) {
+            final Node billNode = billNodes.item(i);
+            final Bill.BillBuilder builder = new Bill.BillBuilder();
+
+            final String billId = reader.evaluate("billId", billNode);
+            setBillInfo(builder, billId);
+
+            final NodeList categories = reader.evaluate("categories/category", billNode, XPathConstants.NODESET);
+            for(int j = 0; j < categories.getLength(); j++) {
+                final Node categoryNode = categories.item(j);
+                final String issueName = reader.evaluate("name", categoryNode);
+                builder.addIssue(issueName);
+            }
+
+            bills.add(builder.createBill());
+        }
+        return bills;
+    }
+
+    private static void setBillInfo(Bill.BillBuilder builder, String billId) throws Exception {
+        final String billInfoXml = downloadContent("http://api.votesmart.org/Votes.getBill?key=1ebd4d39454987ed3d3712cacdfd9e87&billId=" + billId);
+        final XPathReader reader = new XPathReader(billInfoXml);
+
+        builder.setBillId(billId);
+        builder.setBillNumber(reader.evaluate("/bill/billnumber"));
+        builder.setTitle(reader.evaluate("/bill/title"));
+
+        // Compile the expression to get a XPathExpression object.
+        final NodeList actions = reader.evaluate("/bill/actions/action", XPathConstants.NODESET);
+
+        for(int i = 0; i < actions.getLength(); i++) {
+            final Node actionNode = actions.item(i);
+            final String stage = reader.evaluate("stage", actionNode);
+            if("introduced".equalsIgnoreCase(stage)) {
+                builder.setDateIntroduced(reader.evaluate("statusDate", actionNode));
+            }
+            else if("Passage".equalsIgnoreCase(stage) || "Amendment Vote".equalsIgnoreCase(stage)) {
+                builder.setOutcome(reader.evaluate("outcome", actionNode));
+                builder.setOutcomeStatusDate(reader.evaluate("statusDate", actionNode));
+            }
+        }
     }
 
     private static String downloadContent(String uri) throws IOException {
