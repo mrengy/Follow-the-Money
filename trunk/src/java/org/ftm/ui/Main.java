@@ -104,6 +104,7 @@ public final class Main {
             @Override
             public void windowClosed(WindowEvent windowEvent) {
                 m.controller.close();
+                m.dao.shutdown();
             }
         });
 

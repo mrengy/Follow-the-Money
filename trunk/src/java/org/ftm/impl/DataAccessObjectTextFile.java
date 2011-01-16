@@ -112,6 +112,10 @@ public final class DataAccessObjectTextFile implements DataAccessObject {
         throw new IllegalStateException("org.ftm.impl.DataAccessObjectTextFile.getCandidates Not implemented");
     }
 
+    public void shutdown() {
+        // Clean and shutdown services
+    }
+
     public static void main(String[] args) throws Exception {
 
         DataAccessObject dao = new DataAccessObjectTextFile();

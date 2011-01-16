@@ -39,6 +39,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * This implementation is using multiple data source APIs.
@@ -297,28 +302,38 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         return getBills(xmlDoc);
     }
 
+    private static ExecutorService pool = Executors.newFixedThreadPool(10);
+
     private static List<Bill> getBills(String xmlDoc) throws Exception {
         final XPathReader reader = new XPathReader(xmlDoc);
         final NodeList billNodes = reader.evaluate("/bills/bill", XPathConstants.NODESET);
 
-        final List<Bill> bills = new ArrayList<Bill>(billNodes.getLength());
+        final ConcurrentLinkedQueue<Bill> tmpBills = new ConcurrentLinkedQueue<Bill>();
+        final CountDownLatch doneSignal = new CountDownLatch(billNodes.getLength());
         for(int i = 0; i < billNodes.getLength(); i++) {
             final Node billNode = billNodes.item(i);
-            final Bill.BillBuilder builder = new Bill.BillBuilder();
-
             final String billId = reader.evaluate("billId", billNode);
-            setBillInfo(builder, billId);
 
-            final NodeList categories = reader.evaluate("categories/category", billNode, XPathConstants.NODESET);
-            for(int j = 0; j < categories.getLength(); j++) {
-                final Node categoryNode = categories.item(j);
-                final String issueName = reader.evaluate("name", categoryNode);
-                builder.addIssue(issueName);
-            }
+            pool.submit(new Callable<Object>() {
+                public Object call() throws Exception {
+                    final Bill.BillBuilder builder = new Bill.BillBuilder();
+                    setBillInfo(builder, billId);
 
-            bills.add(builder.createBill());
+                    final NodeList categories = reader.evaluate("categories/category", billNode, XPathConstants.NODESET);
+                    for(int j = 0; j < categories.getLength(); j++) {
+                        final Node categoryNode = categories.item(j);
+                        final String issueName = reader.evaluate("name", categoryNode);
+                        builder.addIssue(issueName);
+                    }
+
+                    tmpBills.add(builder.createBill());
+                    doneSignal.countDown();
+                    return null;
+                }
+            });
         }
-        return bills;
+        doneSignal.await();
+        return new ArrayList<Bill>(tmpBills);
     }
 
     private static void setBillInfo(Bill.BillBuilder builder, String billId) throws Exception {
@@ -374,5 +389,9 @@ public final class SimpleDataAccessObject implements DataAccessObject {
             }
         }
         return sb.toString();
+    }
+
+    public void shutdown() {
+        pool.shutdownNow();
     }
 }

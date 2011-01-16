@@ -5,6 +5,7 @@ import org.ftm.api.Candidate;
 import org.ftm.api.DataAccessObject;
 import org.ftm.impl.SimpleDataAccessObject;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -62,7 +63,11 @@ final class DAOTest {
                 }
         */
 
+        final long currentTime65 = System.currentTimeMillis();
         final List<Bill> bills = dao.getBills(new Candidate(32795, "Berry", "Deborah"));
+        final long delta65 = System.currentTimeMillis() - currentTime65;
+        System.out.println("**** Executed getBills in " + new DecimalFormat("0.0000").format(delta65 / 1000f) + "s");
+
         for(Bill bill : bills) {
             //                                final Date date = bill.getDate();
             final String year = "2008";
@@ -85,5 +90,6 @@ final class DAOTest {
             ));
         }
         System.out.println(sb.toString());
+        dao.shutdown();
     }
 }
