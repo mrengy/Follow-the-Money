@@ -108,7 +108,6 @@ public final class SimpleDataAccessObject implements DataAccessObject {
 
     private static Map<String, String> getCategoryOrderToIndustryName() throws IOException {
         InputStream is = SimpleDataAccessObject.class.getResourceAsStream("/resources/catcodes-20100402.csv");
-        StringBuilder sb = new StringBuilder();
 
         //        @SuppressWarnings("unchecked")
         //        final List<String> rawData = FileUtils.readLines(new File("resources/catcodes-20100402.csv"));

@@ -18,6 +18,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,14 +39,15 @@ public final class Main {
     private final Component candidateCp = new CandidateComponent();
     private final Component issueCp = new IssueComponent();
     private final Component contributionCp = new ContributionComponent();
-    private final Applet visu = new VisualizationComponent();
+    private final Applet visu = new VisualizationComponent2();
     private final JSplitPane mainPane;
     private NavigationComponent navigation;
+    private final Controller controller;
 
     public Main() {
         final DataAccessObject dao = new SimpleDataAccessObject();
 
-        final Controller controller = new Controller(this, dao, new Model());
+        controller = new Controller(this, dao, new Model());
 
         final NavigationComponent mp = new NavigationComponent();
 
@@ -88,11 +91,18 @@ public final class Main {
         f.setContentPane(m.mainPane);
 
         f.setResizable(true);
-        final Dimension dim = new Dimension(800, 600);
+        final Dimension dim = new Dimension(900, 640);
         f.setMinimumSize(dim);
         f.setSize(dim);
         final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         f.setLocation((int) (screen.getWidth() - f.getWidth()) / 2, (int) (screen.getHeight() - f.getHeight()) / 2);
+
+        f.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent windowEvent) {
+                m.controller.close();
+            }
+        });
 
         f.pack();
         f.setVisible(true);
