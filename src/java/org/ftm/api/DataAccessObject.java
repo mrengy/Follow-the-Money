@@ -22,4 +22,6 @@ public interface DataAccessObject {
     List<Bill> getBills(Candidate p) throws Exception;
 
     Collection<Candidate> getCandidates(String s) throws Exception;
+
+    void shutdown();
 }
