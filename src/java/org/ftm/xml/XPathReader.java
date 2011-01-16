@@ -47,11 +47,11 @@ public final class XPathReader {
         return (T) evaluate(xpathExpression, xmlDoc, returnType);
     }
 
-    public String evaluate(String exp, Node item) throws XPathExpressionException {
-        return evaluate(exp, item, XPathConstants.STRING);
+    public String evaluate(String xpathExpression, Node item) throws XPathExpressionException {
+        return evaluate(xpathExpression, item, XPathConstants.STRING);
     }
 
-    public String evaluate(String exp) throws XPathExpressionException {
-        return evaluate(exp, xmlDoc, XPathConstants.STRING);
+    public String evaluate(String xpathExpression) throws XPathExpressionException {
+        return evaluate(xpathExpression, xmlDoc, XPathConstants.STRING);
     }
 }
