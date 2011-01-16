@@ -112,7 +112,7 @@
     <target name="ftp">
         <ftp server="ftpperso.free.fr"
              remotedir="/ftm"
-             userid="jhujol"
+             userid="johnny.hujol"
              password="none"
              passive="yes"
              depends="yes"

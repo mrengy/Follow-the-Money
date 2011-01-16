@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jnlp spec="1.0+"
-      codebase="http://jhujol.free.fr/ftm/"
+      codebase="http://johnny.hujol.free.fr/ftm/"
       href="ftm.jnlp">
     <information>
         <title>FTM Visu</title>
@@ -18,6 +18,7 @@
         <jar href="commons-lang_2.3.jar"/>
         <jar href="core_1.2.1.jar"/>
         <jar href="eventbus_1.4.jar"/>
+        <jar href="gicentreUtils.jar"/>
         <jar href="gson_1.5.jar"/>
         <jar href="pde_1.2.1.jar"/>
         <jar href="VoteSmart.jar"/>
