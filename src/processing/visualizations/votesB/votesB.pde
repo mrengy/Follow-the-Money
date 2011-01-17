@@ -45,6 +45,7 @@ void setup()
   smooth();
   
   PFont font = createFont("Helvetica",11);
+  //createFont method may be contributing to performance issues. may want to use loadFont() instead.
   textFont(font,10);
 
   //set parameters for bar chart for contributions
