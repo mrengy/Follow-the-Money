@@ -1,6 +1,9 @@
 package org.ftm.ui;
 
 import org.bushe.swing.event.EventBus;
+import org.ftm.api.Bill;
+import org.ftm.api.Candidate;
+import org.ftm.api.Contribution;
 import org.ftm.api.DataAccessObject;
 import org.ftm.impl.SimpleDataAccessObject;
 import org.ftm.util.Debug;
@@ -20,6 +23,9 @@ import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,7 +45,7 @@ public final class Main {
     private final Component candidateCp = new CandidateComponent();
     private final Component issueCp = new IssueComponent();
     private final Component contributionCp = new ContributionComponent();
-    private final Applet visu = new VisualizationComponent2();
+    private final Applet visu;
     private final JSplitPane mainPane;
     private final NavigationComponent navigation;
 
@@ -48,7 +54,7 @@ public final class Main {
     private final Controller controller;
 
     public Main() {
-        model = new Model();
+        model = Model.getSingleton();
         dao = new SimpleDataAccessObject();
         controller = new Controller(this, this.dao, model);
 
@@ -68,6 +74,7 @@ public final class Main {
         if(Debug.isDebug()) {
             mainPane.setBackground(Color.yellow);
         }
+        visu = new VisualizationComponent2();
     }
 
     public static void main(String[] args) {
@@ -94,7 +101,7 @@ public final class Main {
         f.setContentPane(m.mainPane);
 
         f.setResizable(true);
-        final Dimension dim = new Dimension(820, 640);
+        final Dimension dim = new Dimension(920, 760);
         f.setMinimumSize(dim);
         f.setSize(dim);
         final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -175,25 +182,36 @@ public final class Main {
     }
 
     public void setCandidateSearch() {
+        visu.stop();
         switchComponent(candidateCp);
     }
 
     public void setIssueSearch() {
+        visu.stop();
         switchComponent(issueCp);
     }
 
     public void setContributionSearch() {
+        visu.stop();
         switchComponent(contributionCp);
     }
 
-    public void setVisualization() {
+    public void setVisualization() throws Exception {
         // Set information in model so visu can draw using the model.
+        Model model = Model.getSingleton();
+        Candidate candidate = model.getCandidateSelected();
+        List<Bill> bills = dao.getBills(candidate, 2008);
+        model.setBills(bills);
+
+        final Collection<Contribution> contributions = dao.getContributions(candidate, 2008);
+        model.setContributions(new ArrayList<Contribution>(contributions));
 
 
         // important to call this whenever embedding a PApplet.
         // It ensures that the animation thread is started and
         // that other internal variables are properly set.
         visu.init();
+        visu.start();
         switchComponent(visu);
     }
 }

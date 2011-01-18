@@ -17,7 +17,7 @@ import java.util.List;
  * @since Jun 21, 2010
  */
 public final class DataAccessObjectTextFile implements DataAccessObject {
-    public Collection<Contribution> getContributions(String candidateName) throws Exception {
+    public Collection<Contribution> getContributions(Candidate candidate, int year) throws Exception {
         throw new IllegalStateException("org.ftm.impl.DataAccessObjectTextFile.getContributions Not implemented");
     }
 
@@ -94,7 +94,7 @@ public final class DataAccessObjectTextFile implements DataAccessObject {
         for(String candidateName : candidateNames) {
             if(!StringUtils.isBlank(candidateName)) {
                 final String[] strings = candidateName.split(" ");
-                candidates.add(new Candidate(strings[0], 2 == strings.length ? strings[1] : "n/a"));
+                candidates.add(new Candidate(2 == strings.length ? strings[1] : "n/a", strings[0]));
             }
         }
         return candidates;
@@ -104,7 +104,7 @@ public final class DataAccessObjectTextFile implements DataAccessObject {
         throw new IllegalStateException("org.ftm.impl.DataAccessObjectTextFile.getCandidates Not implemented");
     }
 
-    public List<Bill> getBills(Candidate p) throws Exception {
+    public List<Bill> getBills(Candidate p, int year) throws Exception {
         throw new IllegalStateException("org.ftm.impl.DataAccessObjectTextFile.getBills Not implemented");
     }
 
