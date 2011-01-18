@@ -31,10 +31,13 @@ import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -59,10 +62,21 @@ public final class SimpleDataAccessObject implements DataAccessObject {
 
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    public Collection<Contribution> getContributions(final String candidateName) throws Exception {
-        final Reader reader = new StringReader(downloadContent(
-            "http://transparencydata.com/api/1.0/contributions.json?apikey=160f59b8c6ea40cca6ed1c709179d647&contributor_state=md|va" +
-                "&recipient_ft=" + candidateName.toLowerCase() + "&amount=>|1000&per_page=100000&cycle=2008"));
+    public Collection<Contribution> getContributions(final Candidate candidate, int year) throws Exception {
+        final String candidateName = candidate.getFirstName() + ' ' + candidate.getLastName();
+        final String states = "MA";//candidate.get2LetterStateAbreviation();
+        String uri = "http://transparencydata.com/api/1.0/contributions.json?apikey=160f59b8c6ea40cca6ed1c709179d647&contributor_state=" + states +
+            "&recipient_ft=" + URLEncoder.encode(candidateName.toLowerCase(), "UTF-8") + "&amount=>|1000&per_page=100000&cycle=" + year;
+        //        System.out.println("uri = " + uri);
+        final String jsonContent = downloadContent(uri);
+
+        //        System.out.println("jsonContent = " + jsonContent.substring(Math.min(400, jsonContent.length())));
+
+        if(6 > jsonContent.length()) {
+            return Collections.emptyList();
+        }
+
+        final Reader reader = new StringReader(jsonContent);
 
         //        final Reader reader = new InputStreamReader(SimpleDataAccessObject.class.getResourceAsStream("/resources/contributions.json"));
 
@@ -77,7 +91,7 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         else {
             filter = new Filter<Contribution>() {
                 public boolean accept(Contribution c) {
-                    return c.getRecipientName().getLastName().toLowerCase().contains(candidateName.toLowerCase());
+                    return c.getRecipientName().getLastName().toLowerCase().contains(candidate.getLastName().toLowerCase());
                 }
             };
         }
@@ -85,10 +99,10 @@ public final class SimpleDataAccessObject implements DataAccessObject {
     }
 
     private static Collection<Contribution> loadContribution(Reader reader, Filter<Contribution> filter) throws IOException {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
         final Map<String, String> categoryOrderToIndustryName = getCategoryOrderToIndustryName();
-        gsonBuilder.registerTypeAdapter(Contribution.class, new ContributionDeserializer(categoryOrderToIndustryName));
-        final Gson gson = gsonBuilder.create();
+        final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Contribution.class, new ContributionDeserializer(categoryOrderToIndustryName))
+            .create();
         final Type collectionType = new TypeToken<Collection<Contribution>>() {
         }.getType();
         final Collection<Contribution> tmp = gson.fromJson(reader, collectionType);
@@ -159,6 +173,7 @@ public final class SimpleDataAccessObject implements DataAccessObject {
                 industryCategory = "n/a";
             }
             final String recipient = object.get("recipient_name").getAsString();
+            final String recipientStateId = object.get("recipient_state").getAsString();
             final String recipientType = object.get("recipient_type").getAsString();
             if(!"P".equals(recipientType)) {
                 return null;
@@ -170,10 +185,14 @@ public final class SimpleDataAccessObject implements DataAccessObject {
                 strings = recipient.split(" ");
             }
 
-            Date date = null;
+            Date date;
             try {
                 final JsonElement jsonElement1 = object.get("date");
-                if(!jsonElement1.isJsonNull()) {
+                if(jsonElement1.isJsonNull()) {
+                    final JsonElement jsonElt = object.get("cycle");
+                    date = new SimpleDateFormat("yyyy").parse(jsonElt.getAsString());
+                }
+                else {
                     date = new SimpleDateFormat("yyyy-MM-dd").parse(jsonElement1.getAsString());
                 }
             }
@@ -184,7 +203,7 @@ public final class SimpleDataAccessObject implements DataAccessObject {
             return new Contribution(
                 new Contributor(industryCategory),
                 amount,
-                new Candidate(1 < strings.length ? StringUtils.join(strings, " ", 1, strings.length - 1) : "n/a", strings[0]),
+                new Candidate(1 < strings.length ? StringUtils.join(strings, " ", 1, strings.length).trim() : "n/a", strings[0], recipientStateId),
                 date
             );
         }
@@ -267,7 +286,7 @@ public final class SimpleDataAccessObject implements DataAccessObject {
     );
 
     public Collection<Candidate> getCandidates(String s) throws Exception {
-        final String xmlDoc = downloadContent(GET_CANDIDATES_BY_LEVENHSTEIN + s);
+        final String xmlDoc = downloadContent(GET_CANDIDATES_BY_LEVENHSTEIN + URLEncoder.encode(s, "UTF-8"));
 
         return getCandidatesFromXml(xmlDoc);
     }
@@ -280,31 +299,31 @@ public final class SimpleDataAccessObject implements DataAccessObject {
             final Node candidateNode = candidateNodes.item(i);
             candidates.add(new Candidate(
                 ((Double) reader.evaluate("candidateId", candidateNode, XPathConstants.NUMBER)).intValue(),
+                reader.evaluate("firstName", candidateNode),
                 reader.evaluate("lastName", candidateNode),
-                reader.evaluate("firstName", candidateNode)
+                reader.evaluate("officeStateId", candidateNode)
             ));
         }
         return candidates;
     }
 
-    private static final String GET_BILLS_BY_CANDIDATE_ID = String.format(
-        URI_ACCESS,
-        HOST,
-        "Votes.getByOfficial",
-        VS_API_KEY,
-        "&year=2008&&candidateId="
-    );
-
-    public List<Bill> getBills(Candidate p) throws Exception {
-        final String xmlDoc = downloadContent(GET_BILLS_BY_CANDIDATE_ID + p.getId());
+    public List<Bill> getBills(Candidate p, int year) throws Exception {
+        final String xmlDoc = downloadContent(String.format(
+            "http://%s/%s?key=%s&year=%s&candidateId=%s",
+            HOST,
+            "Votes.getByOfficial",
+            VS_API_KEY,
+            year,
+            p.getId()
+        ));
         //        final String xmlDoc = FileUtils.readFileToString(new File("/Users/hujol/Projects/followthemoney/sf/resources/bills-votesmart-2008-candid32795.xml"));
 
-        return getBills(xmlDoc);
+        return getBills(xmlDoc, year);
     }
 
     private static ExecutorService pool = Executors.newFixedThreadPool(10);
 
-    private static List<Bill> getBills(String xmlDoc) throws Exception {
+    private static List<Bill> getBills(String xmlDoc, final int year) throws Exception {
         final XPathReader reader = new XPathReader(xmlDoc);
         final NodeList billNodes = reader.evaluate("/bills/bill", XPathConstants.NODESET);
 
@@ -316,18 +335,28 @@ public final class SimpleDataAccessObject implements DataAccessObject {
 
             pool.submit(new Callable<Object>() {
                 public Object call() throws Exception {
-                    final Bill.BillBuilder builder = new Bill.BillBuilder();
-                    setBillInfo(builder, billId);
+                    try {
+                        final Bill.BillBuilder builder = new Bill.BillBuilder();
+                        setBillInfo(builder, billId);
 
-                    final NodeList categories = reader.evaluate("categories/category", billNode, XPathConstants.NODESET);
-                    for(int j = 0; j < categories.getLength(); j++) {
-                        final Node categoryNode = categories.item(j);
-                        final String issueName = reader.evaluate("name", categoryNode);
-                        builder.addIssue(issueName);
+                        final NodeList categories = reader.evaluate("categories/category", billNode, XPathConstants.NODESET);
+                        for(int j = 0; j < categories.getLength(); j++) {
+                            final Node categoryNode = categories.item(j);
+                            final String issueName = reader.evaluate("name", categoryNode);
+                            builder.addIssue(issueName);
+                        }
+                        final String vote = reader.evaluate("vote", billNode);
+                        builder.setVote(vote);
+                        builder.setYearVote(year);
+
+                        tmpBills.add(builder.createBill());
                     }
-
-                    tmpBills.add(builder.createBill());
-                    doneSignal.countDown();
+                    catch(Exception e) {
+                        e.printStackTrace();
+                    }
+                    finally {
+                        doneSignal.countDown();
+                    }
                     return null;
                 }
             });
@@ -336,13 +365,23 @@ public final class SimpleDataAccessObject implements DataAccessObject {
         return new ArrayList<Bill>(tmpBills);
     }
 
+    private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat dfYear = new SimpleDateFormat("yyyy");
+
+
     private static void setBillInfo(Bill.BillBuilder builder, String billId) throws Exception {
         final String billInfoXml = downloadContent("http://api.votesmart.org/Votes.getBill?key=1ebd4d39454987ed3d3712cacdfd9e87&billId=" + billId);
         final XPathReader reader = new XPathReader(billInfoXml);
 
         builder.setBillId(billId);
-        builder.setBillNumber(reader.evaluate("/bill/billnumber"));
+        builder.setBillNumber(reader.evaluate("/bill/billNumber"));
         builder.setTitle(reader.evaluate("/bill/title"));
+        try {
+            builder.setDateIntroduced(dfYear.parse(reader.evaluate("/bill/dateIntroduced")));
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
 
         // Compile the expression to get a XPathExpression object.
         final NodeList actions = reader.evaluate("/bill/actions/action", XPathConstants.NODESET);
@@ -351,11 +390,16 @@ public final class SimpleDataAccessObject implements DataAccessObject {
             final Node actionNode = actions.item(i);
             final String stage = reader.evaluate("stage", actionNode);
             if("introduced".equalsIgnoreCase(stage)) {
-                builder.setDateIntroduced(reader.evaluate("statusDate", actionNode));
+                builder.setDateIntroduced(df.parse(reader.evaluate("statusDate", actionNode)));
             }
             else if("Passage".equalsIgnoreCase(stage) || "Amendment Vote".equalsIgnoreCase(stage)) {
                 builder.setOutcome(reader.evaluate("outcome", actionNode));
-                builder.setOutcomeStatusDate(reader.evaluate("statusDate", actionNode));
+                try {
+                    builder.setOutcomeStatusDate(df.parse(reader.evaluate("statusDate", actionNode)));
+                }
+                catch(Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

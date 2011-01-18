@@ -92,20 +92,26 @@ final class Controller implements EventTopicSubscriber {
                     main.setContributionSearch();
                 }
                 else if("visualization".equals(s)) {
-                    main.setVisualization();
+                    try {
+                        main.setVisualization();
+                    }
+                    catch(Exception e) {
+                        e.printStackTrace();
+                        return;
+                    }
                 }
                 else if("candidateselected".equals(s)) {
                     if(!(o instanceof Candidate)) {
                         System.err.println("The passed object must be of type " + Candidate.class);
-                        EventBus.publish("contributorsfound", null);
                         return;
                     }
 
                     // Set the candidate in the model
+                    Model.getSingleton().setCandidateSelected((Candidate) o);
                     final Candidate candidate = (Candidate) o;
                     final List<Contributor> contributors = new ArrayList<Contributor>();
                     try {
-                        final Collection<Contribution> cc = dao.getContributions(null == candidate ? "" : candidate.getLastName());
+                        final Collection<Contribution> cc = dao.getContributions(candidate, 2008);
                         for(Contribution contribution : cc) {
                             final Contributor contributor = contribution.getContributorName();
                             if(!contributors.contains(contributor)) {
@@ -119,6 +125,22 @@ final class Controller implements EventTopicSubscriber {
                         return;
                     }
                     EventBus.publish("contributorsfound", contributors);
+                }
+                else if("contributorselected".equals(s)) {
+                    if(!(o instanceof Contributor)) {
+                        System.err.println("The passed object must be of type " + Contributor.class);
+                        return;
+                    }
+
+                    Model.getSingleton().setContributorSelected((Contributor) o);
+                }
+                else if("issueselected".equals(s)) {
+                    if(!(o instanceof Issue)) {
+                        System.err.println("The passed object must be of type " + Issue.class);
+                        return;
+                    }
+
+                    Model.getSingleton().setIssueSelected((Issue) o);
                 }
             }
         };

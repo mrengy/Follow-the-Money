@@ -6,20 +6,28 @@ package org.ftm.api;
  */
 public final class Candidate {
 
-    private final String lastName;
-    private final String firstName;
     private final int id;
+    private final String firstName;
+    private final String lastName;
+    private final String stateId;
 
-    public Candidate(String lastName, String firstName) {
-        this.id = -1;
-        this.lastName = lastName;
-        this.firstName = firstName;
-    }
-
-    public Candidate(int id, String lastName, String firstName) {
+    public Candidate(int id, String firstName, String lastName, String stateId) {
         this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
+        this.stateId = stateId;
+    }
+
+    public Candidate(int id, String firstName, String lastName) {
+        this(id, firstName, lastName, "NA");
+    }
+
+    public Candidate(String firstName, String lastName) {
+        this(-1, firstName, lastName, "NA");
+    }
+
+    public Candidate(String firstName, String lastName, String stateId) {
+        this(-1, firstName, lastName, stateId);
     }
 
     public boolean hasId() {
@@ -44,6 +52,10 @@ public final class Candidate {
 
     public String getFirstName() {
         return firstName;
+    }
+
+    public String getStateId() {
+        return stateId;
     }
 
     @Override

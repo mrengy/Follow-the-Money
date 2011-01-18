@@ -6,6 +6,8 @@ import org.ftm.api.DataAccessObject;
 import org.ftm.impl.SimpleDataAccessObject;
 
 import java.text.DecimalFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,6 +17,13 @@ import java.util.List;
 final class DAOTest {
 
     public static void main(String[] args) throws Exception {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        int y = calendar.get(Calendar.DAY_OF_YEAR);
+        System.out.println("y = " + y);
+        if(true) return;
+
         final DataAccessObject dao = new SimpleDataAccessObject();
 
         // Bad because I expose methods that one should not access!
@@ -64,7 +73,7 @@ final class DAOTest {
         */
 
         final long currentTime65 = System.currentTimeMillis();
-        final List<Bill> bills = dao.getBills(new Candidate(32795, "Berry", "Deborah"));
+        final List<Bill> bills = dao.getBills(new Candidate(32795, "Deborah", "Berry"), 2008);
         final long delta65 = System.currentTimeMillis() - currentTime65;
         System.out.println("**** Executed getBills in " + new DecimalFormat("0.0000").format(delta65 / 1000f) + "s");
 

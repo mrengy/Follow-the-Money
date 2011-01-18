@@ -11,7 +11,7 @@ public interface DataAccessObject {
     //    Collection<Candidate> getCandidates() throws Exception;
     //
 
-    Collection<Contribution> getContributions(String candidateName) throws Exception;
+    Collection<Contribution> getContributions(Candidate candidate, int year) throws Exception;
 
     List<Issue> getIssues() throws Exception;
 
@@ -19,7 +19,7 @@ public interface DataAccessObject {
 
     List<Candidate> getCandidates(ZipCode zipCode) throws Exception;
 
-    List<Bill> getBills(Candidate p) throws Exception;
+    List<Bill> getBills(Candidate p, int year) throws Exception;
 
     Collection<Candidate> getCandidates(String s) throws Exception;
 

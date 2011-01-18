@@ -2,6 +2,7 @@ package org.ftm.api;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -12,10 +13,12 @@ public final class Bill {
 
     private final String billNumber;
     private final String title;
-    private final String dateIntroduced;
+    private final Date dateIntroduced;
     private final String outcome;
-    private final String outcomeStatusDate;
+    private final Date outcomeStatusDate;
+    private final String vote;
     private final List<String> issues;
+    private final int yearVote;
 
     public Bill(BillBuilder builder) {
         this.title = builder.title;
@@ -23,6 +26,8 @@ public final class Bill {
         this.dateIntroduced = builder.dateIntroduced;
         this.outcome = builder.outcome;
         this.outcomeStatusDate = builder.outcomeStatusDate;
+        this.vote = builder.vote;
+        this.yearVote = builder.yearVote;
         this.issues = Collections.unmodifiableList(builder.issues);
     }
 
@@ -34,7 +39,7 @@ public final class Bill {
         return billNumber;
     }
 
-    public String getDateIntroduced() {
+    public Date getDateIntroduced() {
         return dateIntroduced;
     }
 
@@ -42,12 +47,20 @@ public final class Bill {
         return outcome;
     }
 
-    public String getOutcomeStatusDate() {
+    public Date getOutcomeStatusDate() {
         return outcomeStatusDate;
+    }
+
+    public String getVote() {
+        return vote;
     }
 
     public List<String> getIssues() {
         return issues;
+    }
+
+    public int getYearVote() {
+        return yearVote;
     }
 
     @Override
@@ -57,9 +70,11 @@ public final class Bill {
         sb.append("{billNumber='").append(billNumber).append('\'');
         sb.append(", title='").append(title).append('\'');
         sb.append(", dateIntroduced='").append(dateIntroduced).append('\'');
-        sb.append(", outcome=").append(outcome);
+        sb.append(", outcome='").append(outcome).append('\'');
         sb.append(", outcomeStatusDate='").append(outcomeStatusDate).append('\'');
+        sb.append(", vote='").append(vote).append('\'');
         sb.append(", issues=").append(issues);
+        sb.append(", yearVote=").append(yearVote);
         sb.append('}');
         return sb.toString();
     }
@@ -69,10 +84,12 @@ public final class Bill {
         private String billId = null;
         private String title = null;
         private String billNumber = null;
-        private String dateIntroduced = null;
+        private Date dateIntroduced = null;
         private String outcome = null;
+        private String vote = null;
+        private Date outcomeStatusDate = null;
+        private int yearVote = -1;
 
-        private String outcomeStatusDate = null;
         private final List<String> issues = new ArrayList<String>(4);
 
         public BillBuilder setTitle(String title) {
@@ -85,7 +102,7 @@ public final class Bill {
             return this;
         }
 
-        public BillBuilder setDateIntroduced(String dateIntroduced) {
+        public BillBuilder setDateIntroduced(Date dateIntroduced) {
             this.dateIntroduced = dateIntroduced;
             return this;
         }
@@ -94,7 +111,7 @@ public final class Bill {
             this.outcome = outcome;
         }
 
-        public void setOutcomeStatusDate(String outcomeStatusDate) {
+        public void setOutcomeStatusDate(Date outcomeStatusDate) {
             this.outcomeStatusDate = outcomeStatusDate;
         }
 
@@ -111,6 +128,9 @@ public final class Bill {
             appendToErrorsIfIsNull(errors, outcome, "outcome");
             appendToErrorsIfIsNull(errors, outcomeStatusDate, "outcomeStatusDate");
             appendToErrorsIfIsNull(errors, dateIntroduced, "dateIntroduced");
+            if(-1 == yearVote) {
+                errors.append(String.format("field %s is not set%n", "yearVote"));
+            }
             if(0 != errors.length()) {
                 errors.insert(0, "BillId: " + billId + "\n");
                 throw new IllegalStateException(errors.toString());
@@ -127,6 +147,14 @@ public final class Bill {
 
         public void setBillId(String billId) {
             this.billId = billId;
+        }
+
+        public void setVote(String vote) {
+            this.vote = vote;
+        }
+
+        public void setYearVote(int yearVote) {
+            this.yearVote = yearVote;
         }
     }
 }
