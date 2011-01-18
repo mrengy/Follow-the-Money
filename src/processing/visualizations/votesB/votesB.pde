@@ -34,6 +34,10 @@ Vote vote5_1;
   
   //default text size
   float defaultTextSize = 12;
+  
+//variables for mouseover detection
+float x, y; // X and Y coordinates of text
+float hr, vr; // horizontal and vertical radius of the text
 
 
 // ------------------------ Initialization --------------------------
@@ -122,6 +126,17 @@ void draw()
   vote3_2.display();
   vote4_1.display();
   vote5_1.display();
+  
+  //detect mouseovers
+  fill(120);
+    hr = textWidth(bill1.shortBillName) / 2;
+    vr = (textAscent() + textDescent()) / 2;
+    x = votesX;
+    y = votesY + (lineHeight*bill1.lineNum);
+    if (abs(mouseX - x) < hr &&
+        abs(mouseY - y) < vr){
+      text(bill1.billName, mouseX, mouseY);
+    }
 }
 
 // ------------------ Class definition --------------------
