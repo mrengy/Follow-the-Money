@@ -8,7 +8,7 @@ Host: api.followthemoney.org
 GET /followthemoney/?page_id=98 HTTP/1.1
 Host: www.pauric.net
 
-http://api.followthemoney.org/candidates.list.php?key=d7d55c6207bd8aff6846ec347c74fc1a&state=md
+http://api.followthemoney.org/candidates.list.php?key=d7d55c6207bd8aff6846ec347c74fc1a&state=ma
 
 
 -- Sunlight API
