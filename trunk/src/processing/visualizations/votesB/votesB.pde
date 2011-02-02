@@ -93,7 +93,7 @@ void draw()
   background(255);
   
   //draw bar chart for contributions
-  barChart.draw(335,50,670,380);
+  barChart.draw(535,50,470,380);
   fill(120);
   textSize(22);
   text("Contributions Received per Year", 602,20);
@@ -240,7 +240,7 @@ class Vote{
    float yPos = votesY + (lineHeight*lineNum);
    
    //sets x Position for each item
-   float xPos = votesX - 200 + date; 
+   float xPos = votesX + date; 
    
    //begins to draw ellipse - other commands follow in if statement below  
    ellipseMode(CENTER);
