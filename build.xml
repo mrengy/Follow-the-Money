@@ -9,7 +9,6 @@
     <property name="build.dir" value="build"/>
     <property name="lib.dir" value="lib"/>
     <property name="dist.dir" value="dist"/>
-    <property name="ftm.jar" value="ftmapi.jar"/>
     <property name="src.java.dir" location="src/java"/>
     <property environment="env"/>
 
@@ -32,10 +31,20 @@
         <delete dir="${dist.dir}"/>
     </target>
 
+    <tstamp>
+        <format property="build.number" pattern="yyyy.MM.dd.HHmmss"/>
+    </tstamp>
+
+    <property name="ftm.jar" value="ftm-${build.number}.jar"/>
+
     <target name="jar" depends="clean">
+
         <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+
         <copydir src="resources/images" dest="${build.dir}/resources/images"/>
         <copy file="resources/catcodes-20100402.csv" todir="${build.dir}/resources/"/>
+
         <javac srcdir="${src.java.dir}"
                destdir="${build.dir}"
                source="1.5"
@@ -43,11 +52,21 @@
             <patternset refid="core.sources"/>
             <classpath refid="class.path"/>
         </javac>
+
         <jar jarfile="${dist.dir}/${ftm.jar}"
              compress="true"
              index="true"
              basedir="${build.dir}">
         </jar>
+
+        <copy file="resources/ftm.jnlp" todir="${dist.dir}"/>
+
+        <replace
+                file="${dist.dir}/ftm.jnlp"
+                token="replace-build.number"
+                value="${build.number}"
+                />
+
     </target>
 
     <property name="processing.libraries.dir.osx"
@@ -83,6 +102,7 @@
 
     <target name="-install.ftm.api.jar" depends="jar">
         <mkdir dir="${processing.libraries.dir}"/>
+
         <copy file="${dist.dir}/${ftm.jar}" todir="${processing.libraries.dir}"/>
         <copy file="${lib.dir}/commons-io_1.3.2.jar" todir="${processing.libraries.dir}"/>
         <copy file="${lib.dir}/commons-lang_2.3.jar" todir="${processing.libraries.dir}"/>
@@ -91,17 +111,21 @@
 
     <target name="dist" depends="jar">
 
-        <!-- keytool -genkey -alias ftm -keypass ftmkeypasswd ftmpassword-->
+        <copy todir="${dist.dir}">
+            <fileset dir="lib">
+                <include name="**/*.jar"/>
+            </fileset>
+        </copy>
+
         <signjar
                 destDir="${dist.dir}"
                 alias="ftm"
-                keypass="ftmkeypasswd"
-                storepass="ftmpassword"
-                lazy="true"
+                keypass="ftmkeypass"
+                storepass="ftmkeystore"
+                keystore=".ftmkeystore"
                 >
             <path>
-                <fileset dir="lib" includes="**/*.jar"/>
-                <fileset file="${dist.dir}/${ftm.jar}"/>
+                <fileset dir="${dist.dir}" includes="**/*.jar"/>
             </path>
         </signjar>
 
@@ -110,10 +134,28 @@
     </target>
 
     <target name="ftp">
+
+        <input
+                message="Please enter FTP password:"
+                addproperty="password"
+                />
+
+        <ftp action="del"
+             remotedir="/ftm"
+             server="ftpperso.free.fr"
+             userid="johnny.hujol"
+             password="${password}"
+             verbose="yes"
+                >
+            <fileset>
+                <include name="**/*.jar"/>
+            </fileset>
+        </ftp>
+
         <ftp server="ftpperso.free.fr"
              remotedir="/ftm"
              userid="johnny.hujol"
-             password="none"
+             password="${password}"
              passive="yes"
              depends="yes"
              binary="yes">

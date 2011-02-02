@@ -10,17 +10,19 @@
         <all-permissions/>
     </security>
     <resources>
+        <property name="build.number" value="replace-build.number"/>
+
         <j2se version="1.6+"
               href="http://java.sun.com/products/autodl/j2se"
                 />
-        <jar href="ftmapi.jar" main="true"/>
-        <jar href="commons-io_1.3.2.jar"/>
-        <jar href="commons-lang_2.3.jar"/>
-        <jar href="core_1.2.1.jar"/>
-        <jar href="eventbus_1.4.jar"/>
+        <jar href="ftm-replace-build.number.jar" main="true"/>
+        <jar href="commons-io-2.0.1.jar"/>
+        <jar href="commons-lang-2.6.jar"/>
+        <jar href="core-1.2.1.jar"/>
+        <jar href="eventbus-1.4.jar"/>
         <jar href="gicentreUtils.jar"/>
-        <jar href="gson_1.5.jar"/>
-        <jar href="pde_1.2.1.jar"/>
+        <jar href="gson-1.6.jar"/>
+        <jar href="pde-1.2.1.jar"/>
         <jar href="VoteSmart.jar"/>
 
     </resources>
