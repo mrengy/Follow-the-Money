@@ -19,7 +19,6 @@ import java.applet.Applet;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -83,7 +82,8 @@ public final class Main {
                 createAndShowGui();
             }
         };
-        EventQueue.invokeLater(runnable);
+        EventQueueUtils.invokeInEdt(runnable);
+
     }
 
     /**

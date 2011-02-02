@@ -13,6 +13,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
@@ -52,18 +53,40 @@ final class IssueComponent extends JPanel implements EventTopicSubscriber {
         EventBus.subscribeStrongly("issuesfound", this);
 
         issuesCombo.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent itemEvent) {
-                EventBus.publish("issueselected", itemEvent.getItem());
+            public void itemStateChanged(final ItemEvent itemEvent) {
+                new SwingWorker() {
+                    @Override
+                    protected Object doInBackground() throws Exception {
+                        return null;
+                    }
+
+                    @Override
+                    protected void done() {
+                        EventBus.publish("issueselected", itemEvent.getItem());
+                    }
+                }.execute();
+
             }
         });
     }
 
-    public void onEvent(String s, Object o) {
-        if("issuesfound".equalsIgnoreCase(s)) {
-            if(null != o && o instanceof List) {
-                final List<Issue> issues = (List<Issue>) o;
-                issuesCombo.setModel(new DefaultComboBoxModel(issues.toArray(new Issue[issues.size()])));
+    public void onEvent(final String s, final Object o) {
+        new SwingWorker() {
+            @Override
+            protected Object doInBackground() throws Exception {
+                return null;
             }
-        }
+
+            @Override
+            protected void done() {
+                if("issuesfound".equalsIgnoreCase(s)) {
+                    if(null != o && o instanceof List) {
+                        final List<Issue> issues = (List<Issue>) o;
+                        issuesCombo.setModel(new DefaultComboBoxModel(issues.toArray(new Issue[issues.size()])));
+                    }
+                }
+            }
+        }.execute();
+
     }
 }

@@ -15,6 +15,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.Color;
@@ -90,24 +91,59 @@ final class CandidateComponent extends JPanel implements EventTopicSubscriber {
         });
         candidatesFound.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent event) {
-                EventBus.publish("candidateselected", candidatesFound.getSelectedValue());
+                if(!event.getValueIsAdjusting()) {
+                    new SwingWorker() {
+                        @Override
+                        protected Object doInBackground() throws Exception {
+                            return null;
+                        }
+
+                        @Override
+                        protected void done() {
+                            EventBus.publish("candidateselected", candidatesFound.getSelectedValue());
+                        }
+                    }.execute();
+                }
+
             }
         });
         // Add events
         zipCode.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyPressed(KeyEvent keyEvent) {
-                if(KeyEvent.VK_ENTER == keyEvent.getKeyCode()) {
-                    EventBus.publish("zipcode", zipCode.getText());
-                }
+            public void keyPressed(final KeyEvent keyEvent) {
+                new SwingWorker() {
+                    @Override
+                    protected Object doInBackground() throws Exception {
+                        return null;
+                    }
+
+                    @Override
+                    protected void done() {
+                        if(KeyEvent.VK_ENTER == keyEvent.getKeyCode()) {
+                            EventBus.publish("zipcode", zipCode.getText());
+                        }
+                    }
+                }.execute();
+
             }
         });
         candidateName.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyPressed(KeyEvent keyEvent) {
-                if(KeyEvent.VK_ENTER == keyEvent.getKeyCode()) {
-                    EventBus.publish("candidateNameSearch", candidateName.getText());
-                }
+            public void keyPressed(final KeyEvent keyEvent) {
+                new SwingWorker() {
+                    @Override
+                    protected Object doInBackground() throws Exception {
+                        return null;
+                    }
+
+                    @Override
+                    protected void done() {
+                        if(KeyEvent.VK_ENTER == keyEvent.getKeyCode()) {
+                            EventBus.publish("candidateNameSearch", candidateName.getText());
+                        }
+                    }
+                }.execute();
+
             }
         });
         EventBus.subscribeStrongly("candidatesfound", this);
@@ -171,22 +207,39 @@ final class CandidateComponent extends JPanel implements EventTopicSubscriber {
         }
     */
 
-    public void onEvent(String s, Object o) {
-        if(o instanceof List) {
-            final List<Candidate> candidates = (List<Candidate>) o;
-            Collections.sort(candidates, new Comparator<Candidate>() {
-                public int compare(Candidate p, Candidate o1) {
-                    final String name = p.getFirstName() + ' ' + p.getLastName();
-                    final String name1 = o1.getFirstName() + ' ' + o1.getLastName();
-                    return name.compareTo(name1);
+    public void onEvent(String s, final Object o) {
+        new SwingWorker() {
+            @Override
+            protected Object doInBackground() throws Exception {
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if(o instanceof List) {
+                    final List<Candidate> candidates = (List<Candidate>) o;
+                    Collections.sort(candidates, new Comparator<Candidate>() {
+                        public int compare(Candidate p, Candidate o1) {
+                            final String name = p.getFirstName() + ' ' + p.getLastName();
+                            final String name1 = o1.getFirstName() + ' ' + o1.getLastName();
+                            return name.compareTo(name1);
+                        }
+                    });
+                    candidatesFound.setListData(candidates.toArray(new Candidate[candidates.size()]));
                 }
-            });
-            candidatesFound.setListData(candidates.toArray(new Candidate[candidates.size()]));
-        }
+            }
+        }.execute();
+
     }
 
     public void close() {
-        EventBus.unsubscribe("candidatesfound", this);
+        Runnable runnable = new Runnable() {
+            public void run() {
+                EventBus.unsubscribe("candidatesfound", this);
+            }
+        };
+        EventQueueUtils.invokeInEdt(runnable);
+
     }
 
     private static class MyListCellRenderer extends DefaultListCellRenderer {

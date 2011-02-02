@@ -12,6 +12,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -82,51 +83,106 @@ final class NavigationComponent extends JPanel {
         // Events
         candidateB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                EventBus.publish("candidateSearch", null);
+                new SwingWorker() {
+                    @Override
+                    protected Object doInBackground() throws Exception {
+                        return null;
+                    }
+
+                    @Override
+                    protected void done() {
+                        EventBus.publish("candidateSearch", null);
+                    }
+                }.execute();
+
             }
         });
         issueB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                EventBus.publish("issueSearch", null);
+                new SwingWorker() {
+                    @Override
+                    protected Object doInBackground() throws Exception {
+                        return null;
+                    }
+
+                    @Override
+                    protected void done() {
+                        EventBus.publish("issueSearch", null);
+                    }
+                }.execute();
+
             }
         });
         contributionB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                EventBus.publish("contributionSearch", null);
+                new SwingWorker() {
+                    @Override
+                    protected Object doInBackground() throws Exception {
+                        return null;
+                    }
+
+                    @Override
+                    protected void done() {
+                        EventBus.publish("contributionSearch", null);
+                    }
+                }.execute();
+
             }
         });
         visuB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                EventBus.publish("visualization", null);
+                new SwingWorker() {
+                    @Override
+                    protected Object doInBackground() throws Exception {
+                        return null;
+                    }
+
+                    @Override
+                    protected void done() {
+                        EventBus.publish("visualization", null);
+                    }
+                }.execute();
+
             }
         });
 
         eventSubscriber = new EventTopicSubscriber() {
-            public void onEvent(String s, Object o) {
-                if("candidateselected".equals(s)) {
-                    if(o instanceof Candidate) {
-                        final Candidate candidate = (Candidate) o;
-                        final String text = candidate.getFirstName() + " " + candidate.getLastName();
-                        candidateB.setText(text);
-                        candidateB.setToolTipText(text);
+            public void onEvent(final String s, final Object o) {
+                new SwingWorker() {
+                    @Override
+                    protected Object doInBackground() throws Exception {
+                        return null;
                     }
-                }
-                else if("issueselected".equals(s)) {
-                    if(o instanceof Issue) {
-                        final Issue issue = (Issue) o;
-                        final String text = issue.getDescription();
-                        issueB.setText(text);
-                        issueB.setToolTipText(text);
+
+                    @Override
+                    protected void done() {
+                        if("candidateselected".equals(s)) {
+                            if(o instanceof Candidate) {
+                                final Candidate candidate = (Candidate) o;
+                                final String text = candidate.getFirstName() + " " + candidate.getLastName();
+                                candidateB.setText(text);
+                                candidateB.setToolTipText(text);
+                            }
+                        }
+                        else if("issueselected".equals(s)) {
+                            if(o instanceof Issue) {
+                                final Issue issue = (Issue) o;
+                                final String text = issue.getDescription();
+                                issueB.setText(text);
+                                issueB.setToolTipText(text);
+                            }
+                        }
+                        else if("contributorselected".equals(s)) {
+                            if(o instanceof Contributor) {
+                                final Contributor contributor = (Contributor) o;
+                                final String text = contributor.getIndustryCategory();
+                                contributionB.setText(text);
+                                contributionB.setToolTipText(text);
+                            }
+                        }
                     }
-                }
-                else if("contributorselected".equals(s)) {
-                    if(o instanceof Contributor) {
-                        final Contributor contributor = (Contributor) o;
-                        final String text = contributor.getIndustryCategory();
-                        contributionB.setText(text);
-                        contributionB.setToolTipText(text);
-                    }
-                }
+                }.execute();
+
             }
         };
         EventBus.subscribeStrongly("candidateselected", eventSubscriber);
@@ -136,7 +192,7 @@ final class NavigationComponent extends JPanel {
 
     @Override
     public void paintComponent(Graphics g) {
-        if(bgImage != null) {
+        if(null != bgImage) {
             g.drawImage(bgImage, 18, 20, this);
         }
         else {
