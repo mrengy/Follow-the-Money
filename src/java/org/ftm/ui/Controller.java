@@ -19,12 +19,12 @@ import java.util.List;
  */
 final class Controller implements EventTopicSubscriber {
 
-    private final Main main;
+    private final FollowTheMoney followTheMoney;
     private final DataAccessObject dao;
     private final Model model;
 
-    Controller(Main main, DataAccessObject dao, Model model) {
-        this.main = main;
+    Controller(FollowTheMoney followTheMoney, DataAccessObject dao, Model model) {
+        this.followTheMoney = followTheMoney;
         this.dao = dao;
         this.model = model;
 
@@ -83,17 +83,17 @@ final class Controller implements EventTopicSubscriber {
                     EventBus.publish("issuesfound", issues);
                 }
                 else if("candidateSearch".equals(s)) {
-                    main.setCandidateSearch();
+                    followTheMoney.setCandidateSearch();
                 }
                 else if("issueSearch".equals(s)) {
-                    main.setIssueSearch();
+                    followTheMoney.setIssueSearch();
                 }
                 else if("contributionSearch".equals(s)) {
-                    main.setContributionSearch();
+                    followTheMoney.setContributionSearch();
                 }
                 else if("visualization".equals(s)) {
                     try {
-                        main.setVisualization();
+                        followTheMoney.setVisualization();
                     }
                     catch(Exception e) {
                         e.printStackTrace();
