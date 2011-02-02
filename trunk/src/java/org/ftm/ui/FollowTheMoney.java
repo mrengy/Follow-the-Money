@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  * @author <font size=-1 color="#a3a3a3">Johnny Hujol</font>
  * @since Oct 26, 2010
  */
-public final class Main {
+public final class FollowTheMoney {
 
     //Specify the look and feel to use.  Valid values:
     //null (use the default), "Metal", "System", "Motif", "GTK+"
@@ -52,7 +52,7 @@ public final class Main {
     private final DataAccessObject dao;
     private final Controller controller;
 
-    public Main() {
+    public FollowTheMoney() {
         model = Model.getSingleton();
         dao = new SimpleDataAccessObject();
         controller = new Controller(this, this.dao, model);
@@ -97,7 +97,7 @@ public final class Main {
         final JFrame f = new JFrame("Follow The Money");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        final Main m = new Main();
+        final FollowTheMoney m = new FollowTheMoney();
         f.setContentPane(m.mainPane);
 
         f.setResizable(true);
@@ -150,21 +150,21 @@ public final class Main {
                 + lookAndFeel);
             System.err.println("Did you include the L&F library in the class path?");
             System.err.println("Using the default look and feel.");
-            Logger.getLogger("org.ftm.ui.Main").log(Level.WARNING, null, e);
+            Logger.getLogger("org.ftm.ui.FollowTheMoney").log(Level.WARNING, null, e);
         }
         catch(UnsupportedLookAndFeelException e) {
             System.err.println("Can't use the specified look and feel ("
                 + lookAndFeel
                 + ") on this platform.");
             System.err.println("Using the default look and feel.");
-            Logger.getLogger("org.ftm.ui.Main").log(Level.WARNING, null, e);
+            Logger.getLogger("org.ftm.ui.FollowTheMoney").log(Level.WARNING, null, e);
         }
         catch(Exception e) {
             System.err.println("Couldn't get specified look and feel ("
                 + lookAndFeel
                 + "), for some reason.");
             System.err.println("Using the default look and feel.");
-            Logger.getLogger("org.ftm.ui.Main").log(Level.WARNING, null, e);
+            Logger.getLogger("org.ftm.ui.FollowTheMoney").log(Level.WARNING, null, e);
         }
     }
 

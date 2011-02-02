@@ -28,7 +28,7 @@
     </resources>
     <application-desc
             name="Follow The Money"
-            main-class="org.ftm.ui.Main">
+            main-class="org.ftm.ui.FollowTheMoney">
     </application-desc>
     <update check="background"/>
 </jnlp>

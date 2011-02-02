@@ -88,7 +88,7 @@
     </target>
 
     <target name="run" depends="jar">
-        <java classname="org.ftm.ui.Main"
+        <java classname="org.ftm.ui.FollowTheMoney"
               fork="true"
               failonerror="true"
               maxmemory="128m"
@@ -111,11 +111,13 @@
 
     <target name="dist" depends="jar">
 
-        <copy todir="${dist.dir}">
-            <fileset dir="lib">
-                <include name="**/*.jar"/>
-            </fileset>
-        </copy>
+        <!--
+                <copy todir="${dist.dir}">
+                    <fileset dir="lib">
+                        <include name="**/*.jar"/>
+                    </fileset>
+                </copy>
+        -->
 
         <signjar
                 destDir="${dist.dir}"
