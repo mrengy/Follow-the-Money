@@ -102,7 +102,7 @@ final class Controller implements EventTopicSubscriber {
                 }
                 else if("candidateselected".equals(s)) {
                     if(!(o instanceof Candidate)) {
-                        System.err.println("The passed object must be of type " + Candidate.class);
+                        printTypeError(o, Candidate.class);
                         return;
                     }
 
@@ -128,7 +128,7 @@ final class Controller implements EventTopicSubscriber {
                 }
                 else if("contributorselected".equals(s)) {
                     if(!(o instanceof Contributor)) {
-                        System.err.println("The passed object must be of type " + Contributor.class);
+                        printTypeError(o, Contributor.class);
                         return;
                     }
 
@@ -136,7 +136,7 @@ final class Controller implements EventTopicSubscriber {
                 }
                 else if("issueselected".equals(s)) {
                     if(!(o instanceof Issue)) {
-                        System.err.println("The passed object must be of type " + Issue.class);
+                        printTypeError(o, Issue.class);
                         return;
                     }
 
@@ -145,6 +145,14 @@ final class Controller implements EventTopicSubscriber {
             }
         };
         new Thread(runnable).start();
+    }
+
+    private static void printTypeError(Object o, Class typeExpected) {
+        System.err.println(String.format(
+            "The passed object must be of type %s.%nFound type %s.",
+            typeExpected,
+            null == o ? null : o.getClass()
+        ));
     }
 
     public void close() {
