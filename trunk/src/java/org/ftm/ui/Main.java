@@ -123,50 +123,48 @@ public final class Main {
     }
 
     private static void initLookAndFeel() {
-        if(null != LOOKANDFEEL) {
-            String lookAndFeel;
-            if("Metal".equals(LOOKANDFEEL)) {
-                lookAndFeel = UIManager.getCrossPlatformLookAndFeelClassName();
-            }
-            else if("System".equals(LOOKANDFEEL)) {
-                lookAndFeel = UIManager.getSystemLookAndFeelClassName();
-            }
-            else if("Motif".equals(LOOKANDFEEL)) {
-                lookAndFeel = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
-            }
-            else if("GTK+".equals(LOOKANDFEEL)) { //new in 1.4.2
-                lookAndFeel = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
-            }
-            else {
-                System.err.println("Unexpected value of LOOKANDFEEL specified: "
-                    + LOOKANDFEEL);
-                lookAndFeel = UIManager.getCrossPlatformLookAndFeelClassName();
-            }
+        String lookAndFeel;
+        if("Metal".equals(LOOKANDFEEL)) {
+            lookAndFeel = UIManager.getCrossPlatformLookAndFeelClassName();
+        }
+        else if("System".equals(LOOKANDFEEL)) {
+            lookAndFeel = UIManager.getSystemLookAndFeelClassName();
+        }
+        else if("Motif".equals(LOOKANDFEEL)) {
+            lookAndFeel = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
+        }
+        else if("GTK+".equals(LOOKANDFEEL)) { //new in 1.4.2
+            lookAndFeel = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
+        }
+        else {
+            System.err.println("Unexpected value of LOOKANDFEEL specified: "
+                + LOOKANDFEEL);
+            lookAndFeel = UIManager.getCrossPlatformLookAndFeelClassName();
+        }
 
-            try {
-                UIManager.setLookAndFeel(lookAndFeel);
-            }
-            catch(ClassNotFoundException e) {
-                System.err.println("Couldn't find class for specified look and feel:"
-                    + lookAndFeel);
-                System.err.println("Did you include the L&F library in the class path?");
-                System.err.println("Using the default look and feel.");
-                Logger.getLogger("org.ftm.ui.Main").log(Level.WARNING, null, e);
-            }
-            catch(UnsupportedLookAndFeelException e) {
-                System.err.println("Can't use the specified look and feel ("
-                    + lookAndFeel
-                    + ") on this platform.");
-                System.err.println("Using the default look and feel.");
-                Logger.getLogger("org.ftm.ui.Main").log(Level.WARNING, null, e);
-            }
-            catch(Exception e) {
-                System.err.println("Couldn't get specified look and feel ("
-                    + lookAndFeel
-                    + "), for some reason.");
-                System.err.println("Using the default look and feel.");
-                Logger.getLogger("org.ftm.ui.Main").log(Level.WARNING, null, e);
-            }
+        try {
+            UIManager.setLookAndFeel(lookAndFeel);
+        }
+        catch(ClassNotFoundException e) {
+            System.err.println("Couldn't find class for specified look and feel:"
+                + lookAndFeel);
+            System.err.println("Did you include the L&F library in the class path?");
+            System.err.println("Using the default look and feel.");
+            Logger.getLogger("org.ftm.ui.Main").log(Level.WARNING, null, e);
+        }
+        catch(UnsupportedLookAndFeelException e) {
+            System.err.println("Can't use the specified look and feel ("
+                + lookAndFeel
+                + ") on this platform.");
+            System.err.println("Using the default look and feel.");
+            Logger.getLogger("org.ftm.ui.Main").log(Level.WARNING, null, e);
+        }
+        catch(Exception e) {
+            System.err.println("Couldn't get specified look and feel ("
+                + lookAndFeel
+                + "), for some reason.");
+            System.err.println("Using the default look and feel.");
+            Logger.getLogger("org.ftm.ui.Main").log(Level.WARNING, null, e);
         }
     }
 
