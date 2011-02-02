@@ -130,6 +130,7 @@
         </signjar>
 
         <copy file="resources/ftm.jnlp" todir="${dist.dir}"/>
+
         <antcall target="ftp"/>
     </target>
 
@@ -148,7 +149,7 @@
              verbose="yes"
                 >
             <fileset>
-                <include name="**/*.jar"/>
+                <include name="**/ftm-*.jar"/>
             </fileset>
         </ftp>
 
