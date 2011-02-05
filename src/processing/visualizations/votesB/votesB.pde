@@ -4,23 +4,18 @@ import org.gicentre.utils.stat.*;        // For chart classes.
 // --------------------- Sketch-wide variables ----------------------
 
 BarChart barChart; 
-Bill bill1;
-Bill bill2;
-Bill bill3;
-Bill bill4;
-Bill bill5;
-Bill bill6;
-Vote vote1;
-Vote vote2;
-Vote vote3;
-Vote vote4;
-Vote vote5;
-Vote vote6;
-Vote vote2_1;
-Vote vote3_1;
-Vote vote3_2;
-Vote vote4_1;
-Vote vote5_1;
+
+//# of bills
+int billCount = 6;
+
+//defining array of bills
+Bill[] bills = new Bill[billCount];
+
+//# of votes
+int voteCount = 6;
+
+//defining array of votes
+Vote[] votes = new Vote[voteCount];
 
 //variables for spacing
   //top of the votes graphic
@@ -34,6 +29,9 @@ Vote vote5_1;
   
   //default text size
   float defaultTextSize = 12;
+  
+  //padding between tooltip text and background
+  float tooltipPadding = 5;
   
 //variables for mouseover detection
 float x, y; // X and Y coordinates of text
@@ -63,26 +61,20 @@ void setup()
   barChart.showCategoryAxis(true); 
   
   //set parameters for bills
-  bill1 = new Bill("HR 1207","Treatment of Human Embryos","yes",10,30,1);
-  bill2 = new Bill("HR 1211","Medicare Payment Adjustment","no",20,42,2);
-  bill3 = new Bill("HR 1264","Expressing Support for the designation of March as National Essential Tremor Awareness Month","non-vote",40,102,3);
-  bill4 = new Bill("HR 1290","Supporting the Observance of American Diabetes Month","no",200,232,4);
-  bill5 = new Bill("HR 1311","Pysician Payment and Therapy Relief Act of 2010","non-vote",280,332,5);
-  bill6 = new Bill("HR 1342","Supporting the Goals and Ideals of a National Mesothelioma Awareness Day","yes",100,350,6);
+  bills[0] = new Bill("HR 1207","Treatment of Human Embryos","yes",10,30,1);
+  bills[1] = new Bill("HR 1211","Medicare Payment Adjustment","no",20,42,2);
+  bills[2] = new Bill("HR 1264","Expressing Support for the designation of March as National Essential Tremor Awareness Month","non-vote",40,102,3);
+  bills[3] = new Bill("HR 1290","Supporting the Observance of American Diabetes Month","no",200,232,4);
+  bills[4] = new Bill("HR 1311","Pysician Payment and Therapy Relief Act of 2010","non-vote",280,332,5);
+  bills[5] = new Bill("HR 1342","Supporting the Goals and Ideals of a National Mesothelioma Awareness Day","yes",100,350,6);
   
   //set parameters for votes
-  vote1 = new Vote("no",20,1);
-  vote2 = new Vote("non-vote",30,2);
-  vote3 = new Vote("yes",62,3);
-  vote4 = new Vote("no",232,4);
-  vote5 = new Vote("non-vote",302,5);
-  vote6 = new Vote("yes",350,6);
-  
-  vote2_1 = new Vote("yes",42,2);
-  vote3_1 = new Vote("no",40,3);
-  vote3_2 = new Vote("yes",102,3);
-  vote4_1 = new Vote("non-vote",200,4);
-  vote5_1 = new Vote("yes",332,5);
+  votes[0] = new Vote("no",30,1);
+  votes[1] = new Vote("non-vote",42,2);
+  votes[2] = new Vote("yes",102,3);
+  votes[3] = new Vote("no",232,4);
+  votes[4] = new Vote("non-vote",332,5);
+  votes[5] = new Vote("yes",350,6);
 }
 
 // ------------------ Processing draw --------------------
@@ -96,7 +88,7 @@ void draw()
   barChart.draw(535,50,470,380);
   fill(120);
   textSize(22);
-  text("Contributions Received per Year", 602,20);
+  text("Contributions from the Oil Industry to Nancy Pelosi", 602,20);
   float textHeight = textAscent();
   textSize(defaultTextSize);
   
@@ -106,38 +98,33 @@ void draw()
   textSize(defaultTextSize);
   
   //draw bills
-  bill1.display();
-  bill2.display();
-  bill3.display();
-  bill4.display();
-  bill5.display();
-  bill6.display();
+  for (int i = 0; i < billCount; i++){
+  bills[i].display();
+  }
   
   //draw votes
-  vote1.display();
-  vote2.display();
-  vote3.display();
-  vote4.display();
-  vote5.display();
-  vote6.display();
+  for (int i = 0; i < voteCount; i++){
+  votes[i].display();
+  }
   
-  vote2_1.display();
-  vote3_1.display();
-  vote3_2.display();
-  vote4_1.display();
-  vote5_1.display();
+  //trace mouse position
+  //text(mouseX+" / "+mouseY, mouseX, mouseY);
   
-  //detect mouseovers
-  fill(120);
-    hr = textWidth(bill1.shortBillName) / 2;
+  //detect mouseovers  
+  for (int i=0; i < bills.length; i++){
+    hr = textWidth(bills[i].shortBillName) / 2;
     vr = (textAscent() + textDescent()) / 2;
-    x = votesX;
-    y = votesY + (lineHeight*bill1.lineNum);
+    x = votesX - hr;
+    y = votesY + (lineHeight*bills[i].lineNum);
     if (abs(mouseX - x) < hr &&
         abs(mouseY - y) < vr){
-      text(bill1.billName, mouseX, mouseY);
-    }
-}
+      fill(254,255,211);
+      rect(mouseX, (mouseY - lineHeight ), (textWidth(bills[i].billName)+tooltipPadding*2), lineHeight);
+      fill(120);
+      text(bills[i].billName, (mouseX + tooltipPadding), (mouseY - tooltipPadding));
+    } // end if
+  } //end for
+} //end draw
 
 // ------------------ Class definition --------------------
 // Bill
