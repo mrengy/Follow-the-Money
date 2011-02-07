@@ -3,6 +3,7 @@ import org.gicentre.utils.stat.*;        // For chart classes.
 
 // --------------------- Sketch-wide variables ----------------------
 
+
 BarChart barChart; 
 
 //# of bills
@@ -45,6 +46,8 @@ void setup()
 {
   size(1000,700);
   smooth();
+  noLoop();
+
   
   PFont font = createFont("Helvetica",11);
   //createFont method may be contributing to performance issues. may want to use loadFont() instead.
@@ -54,11 +57,12 @@ void setup()
   barChart = new BarChart(this);
   barChart.setData(new float[] {246268768,280196760,4000000,200000000});
   barChart.setBarLabels(new String[] {"2007","2008","2009","2010"});
-  barChart.setBarColour(color(300,600,0,200));
-  barChart.setBarGap(2); 
+  barChart.setBarColour(color(50, 110, 75, 255));
+  barChart.setBarGap(26); 
   barChart.setValueFormat("$###,###");
   barChart.showValueAxis(true); 
   barChart.showCategoryAxis(true); 
+
   
   //set parameters for bills
   bills[0] = new Bill("HR 1207","Treatment of Human Embryos","yes",10,30,1);
@@ -83,8 +87,13 @@ void setup()
 void draw()
 {
   background(255);
-  
   //draw bar chart for contributions
+
+  
+  //rectMode(CENTER);
+  stroke(153);
+  rect(510, 40, 480, 400);
+    
   barChart.draw(535,50,470,380);
   fill(120);
   textSize(22);
