@@ -46,7 +46,7 @@ void setup()
 {
   size(1000,700);
   smooth();
-  noLoop();
+  //noLoop();
 
   
   PFont font = createFont("Helvetica",11);
