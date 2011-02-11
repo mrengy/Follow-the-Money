@@ -131,6 +131,10 @@ void draw()
       rect(mouseX, (mouseY - lineHeight ), (textWidth(bills[i].billName)+tooltipPadding*2), lineHeight);
       fill(120);
       text(bills[i].billName, (mouseX + tooltipPadding), (mouseY - tooltipPadding));
+      
+      //resets fill
+      fill(255);
+      
     } // end if
   } //end for
 } //end draw
@@ -214,6 +218,9 @@ class Bill{
    
    //resets stroke
    stroke(0);
+   
+   //resets fill
+   fill(255);
   }
 }
 
@@ -265,5 +272,8 @@ class Vote{
    //resets stroke
    stroke(120);
    strokeWeight(1);
+   
+   //resets fill
+   fill(255);
   }
 }
