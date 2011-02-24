@@ -20,10 +20,10 @@ Vote[] votes = new Vote[voteCount];
 
 //variables for spacing
   //top of the votes graphic
-  float votesY = 500;
+  float votesY = 319;
   
   //vertical axis of votes graphic
-  float votesX = 602;
+  float votesX = 262;
   
   //line height for votes graphic
   float lineHeight = 18;
@@ -44,8 +44,10 @@ float hr, vr; // horizontal and vertical radius of the text
 // Initialises the data and bar chart.
 void setup()
 {
-  size(1000,700);
+  size(1024,768);
   smooth();
+  
+  //comment out noLoop to get tooltips back
   //noLoop();
 
   
@@ -86,20 +88,33 @@ void setup()
 // Draws the graph in the sketch.
 void draw()
 {
-  background(255);
+  
+  background(238);
   //draw bar chart for contributions
 
   
   //rectMode(CENTER);
+  
+  //rectangle behind contributions barchart
+  noStroke();
+  rect(261, 51, 383, 228);
+  //reset stroke color
   stroke(153);
-  rect(510, 40, 480, 400);
     
-  barChart.draw(535,50,470,380);
+  barChart.draw(195,50,470,240);
   fill(120);
   textSize(22);
-  text("Contributions from the Oil Industry to Nancy Pelosi", 602,20);
+  text("Contributions from the Oil Industry to Nancy Pelosi", 262,20);
   float textHeight = textAscent();
   textSize(defaultTextSize);
+  
+  //rectangle behind vote
+  noStroke();
+  fill(255);
+  rect(20, 319, 726, 679);
+  //reset stroke and fill color
+  stroke(153);
+  fill(120);
   
   //draw label for votes graphic
   textSize(22);
